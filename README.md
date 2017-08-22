@@ -1,9 +1,14 @@
-WETA Text Mining toolkit
+WETA
 ======================
 
-This is an abstract layer standing on the gaits' shoulders, including a variety of open source NLP libraries, text analytics tools.
-The aim is to integrate them in data representation, API, workflow/pipeline, and facilitate these solid but usually overlaid algorithms
-to ease text analytics tasks.
+- What is WETA?
+
+WATA is Workflow Environment for Text Analytics which provides a lot of Text Mining toolkit and a visual workflow canvas.
+
+It is an abstract layer standing on the gaits' shoulders, including a variety of open source NLP libraries, text analytics
+tools and Spark ecosystem.
+The aim is to integrate them in data representation, API, workflow/pipeline, and facilitate these solid but usually overlaid
+algorithms to ease text analytics tasks.
 
 ## Building blocks
 
