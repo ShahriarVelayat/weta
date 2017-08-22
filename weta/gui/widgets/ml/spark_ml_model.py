@@ -3,7 +3,7 @@ from Orange.widgets import widget
 from pyspark.ml import Model
 from pyspark.sql import HiveContext
 
-from weta.gui.base.spark_contexts import SparkEnvironment
+from weta.gui.base.spark_environment import SparkEnvironment
 
 
 class OWSparkMLMOdel(SparkEnvironment, widget.OWWidget):

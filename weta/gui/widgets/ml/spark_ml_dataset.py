@@ -285,7 +285,7 @@ class CompleterNavigator(QtCore.QObject):
             return False
 
 
-from weta.gui.base.spark_contexts import SparkEnvironment
+from weta.gui.base.spark_environment import SparkEnvironment
 import pyspark
 from pyspark.ml.feature import VectorAssembler
 

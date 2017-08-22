@@ -7,7 +7,7 @@ from AnyQt.QtWidgets import (
     QSizePolicy, QSplitter, QPlainTextEdit
 )
 
-from weta.gui.base.spark_contexts import SparkEnvironment
+from weta.gui.base.spark_environment import SparkEnvironment
 from weta.gui.utils.data_utils import pandas_to_orange, format_sql
 
 

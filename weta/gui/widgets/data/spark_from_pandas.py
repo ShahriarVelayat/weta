@@ -3,7 +3,7 @@ import pyspark
 from Orange.widgets import widget, gui, settings
 from AnyQt.QtWidgets import QSizePolicy
 
-from weta.gui.base.spark_contexts import SparkEnvironment
+from weta.gui.base.spark_environment import SparkEnvironment
 
 
 class OWSparkToPandas(SparkEnvironment, widget.OWWidget):

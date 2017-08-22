@@ -6,7 +6,7 @@ from Orange.widgets.settings import Setting
 from AnyQt import QtGui
 from pyspark.sql import HiveContext
 
-from ..base.spark_contexts import SparkEnvironment
+from ..base.spark_environment import SparkEnvironment
 from ..utils.gui_utils import ParameterWidget
 from ..utils.ml_api_utils import get_transformers, get_object_info
 
@@ -142,7 +142,7 @@ class OWSparkTransformer(SparkEnvironment):
         method_instance = self.method()
         paramMap = self.build_param_map(method_instance)
 
-        self.out_df = method_instance.transform(self.in_df, params = paramMap)
+        self.out_df = method_instance.transform(self.in_df, params=paramMap)
         if self.setting_var_cache:
             self.out_df = self.out_df.cache()
 

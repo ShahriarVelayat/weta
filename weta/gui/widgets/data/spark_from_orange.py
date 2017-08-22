@@ -2,7 +2,7 @@ import pyspark
 from Orange.data import Table
 from Orange.widgets import widget, gui, settings
 
-from weta.gui.base.spark_contexts import SparkEnvironment
+from weta.gui.base.spark_environment import SparkEnvironment
 from weta.gui.utils.data_utils import orange_to_pandas
 
 
