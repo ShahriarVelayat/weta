@@ -1,7 +1,7 @@
 from Orange.widgets import widget
 from pyspark.ml import feature
 
-from weta.gui.base.spark_ml_transformer import OWSparkTransformer
+from weta.gui.widgets.spark_ml_transformer import OWSparkTransformer
 
 
 class OWSparkMLFeature(OWSparkTransformer, widget.OWWidget):

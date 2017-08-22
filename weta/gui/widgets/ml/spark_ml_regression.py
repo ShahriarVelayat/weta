@@ -1,7 +1,7 @@
 from Orange.widgets import widget
 from pyspark.ml import regression
 
-from weta.gui.base.spark_ml_estimator import OWSparkEstimator
+from weta.gui.widgets.spark_ml_estimator import OWSparkEstimator
 
 
 class OWSparkMLRegression(OWSparkEstimator, widget.OWWidget):

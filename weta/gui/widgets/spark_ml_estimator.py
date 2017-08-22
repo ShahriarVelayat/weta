@@ -2,7 +2,7 @@ from Orange.widgets import widget
 from pyspark.ml import Model
 
 from .spark_ml_transformer import OWSparkTransformer
-from ..utils.ml_api_utils import get_estimators
+from weta.gui.utils.ml_api_utils import get_estimators
 
 
 class OWSparkEstimator(OWSparkTransformer):

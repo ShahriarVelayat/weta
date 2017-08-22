@@ -3,10 +3,9 @@ from collections import OrderedDict
 import pyspark
 from Orange.widgets import widget, gui
 from Orange.widgets.settings import Setting
-from pyspark.sql import HiveContext
 
-from weta.gui.base.spark_environment import SparkEnvironment
 from weta.gui.utils.gui_utils import ParameterWidget
+from weta.gui.widgets.spark_environment import SparkEnvironment
 
 
 class OWSparkSQLTableContext(SparkEnvironment, widget.OWWidget):

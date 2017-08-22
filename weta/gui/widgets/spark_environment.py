@@ -1,6 +1,7 @@
 class SparkEnvironment:
     _sc = None
     _hc = None
+    _sqlContext = None
 
     @property
     def sc(self):
@@ -9,6 +10,14 @@ class SparkEnvironment:
     @sc.setter
     def sc(self, val):
         SparkEnvironment._sc = val
+
+    @property
+    def sqlContext(self):
+        return SparkEnvironment._sqlContext
+
+    @sqlContext.setter
+    def sqlContext(self, val):
+        SparkEnvironment._sqlContext = val
 
     @property
     def hc(self):

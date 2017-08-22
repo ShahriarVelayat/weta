@@ -3,9 +3,6 @@ import os
 import sys
 import unicodedata
 
-from Orange.widgets import widget, gui
-from Orange.widgets.settings import Setting
-from Orange.widgets.utils import itemmodels
 from AnyQt import QtGui, QtWidgets
 from AnyQt.QtCore import Qt, QRegExp, QByteArray, QItemSelectionModel
 from AnyQt.QtGui import (
@@ -16,6 +13,9 @@ from AnyQt.QtWidgets import (
     QMenu, QSplitter, QToolButton,
     QFileDialog
 )
+from Orange.widgets import widget, gui
+from Orange.widgets.settings import Setting
+from Orange.widgets.utils import itemmodels
 from qtconsole.inprocess import QtInProcessKernelManager
 from qtconsole.rich_jupyter_widget import RichJupyterWidget
 
@@ -203,7 +203,7 @@ def select_row(view, row):
                     QItemSelectionModel.ClearAndSelect)
 
 
-from weta.gui.base.spark_environment import SparkEnvironment
+from weta.gui.widgets.spark_environment import SparkEnvironment
 
 
 class OWPySparkScript(SparkEnvironment, widget.OWWidget):

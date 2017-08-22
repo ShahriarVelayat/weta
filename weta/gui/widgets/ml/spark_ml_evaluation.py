@@ -1,11 +1,11 @@
 import random
 
-from Orange.widgets import widget, gui
 from AnyQt import QtGui, QtCore
+from Orange.widgets import widget, gui
 from pyspark.ml import evaluation
 
-from weta.gui.base.spark_ml_transformer import OWSparkTransformer
 from weta.gui.utils.ml_api_utils import get_evaluators
+from weta.gui.widgets.spark_ml_transformer import OWSparkTransformer
 
 
 class OWSparkMLEvaluator(OWSparkTransformer, widget.OWWidget):

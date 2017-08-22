@@ -2,12 +2,12 @@ import sys
 from functools import partial, reduce
 
 import Orange
-from Orange.widgets import gui, widget
-from Orange.widgets.utils import itemmodels
 from AnyQt import QtCore
 from AnyQt import QtGui
 from AnyQt.QtCore import Qt
+from Orange.widgets import gui, widget
 from Orange.widgets.data.owselectcolumns import OWSelectAttributes
+from Orange.widgets.utils import itemmodels
 
 
 def slices(indices):
@@ -285,7 +285,7 @@ class CompleterNavigator(QtCore.QObject):
             return False
 
 
-from weta.gui.base.spark_environment import SparkEnvironment
+from weta.gui.widgets.spark_environment import SparkEnvironment
 import pyspark
 from pyspark.ml.feature import VectorAssembler
 

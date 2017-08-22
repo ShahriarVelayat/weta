@@ -1,14 +1,13 @@
 from collections import OrderedDict
 
 import pyspark
+from AnyQt import QtGui
 from Orange.widgets import widget, gui
 from Orange.widgets.settings import Setting
-from AnyQt import QtGui
-from pyspark.sql import HiveContext
 
-from ..base.spark_environment import SparkEnvironment
-from ..utils.gui_utils import ParameterWidget
-from ..utils.ml_api_utils import get_transformers, get_object_info
+from weta.gui.utils.gui_utils import ParameterWidget
+from weta.gui.utils.ml_api_utils import get_transformers, get_object_info
+from weta.gui.widgets.spark_environment import SparkEnvironment
 
 
 class OWSparkTransformer(SparkEnvironment):

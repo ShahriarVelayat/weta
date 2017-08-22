@@ -3,10 +3,10 @@ from collections import OrderedDict
 from Orange.widgets import widget, gui
 from Orange.widgets.settings import Setting
 from pyspark import SparkConf, SparkContext
-from pyspark.sql import HiveContext
+from pyspark.sql import SQLContext, HiveContext
 
-from weta.gui.base.spark_environment import SparkEnvironment
 from weta.gui.utils.gui_utils import ParameterWidget
+from weta.gui.widgets.spark_environment import SparkEnvironment
 
 
 class OWSparkContext(SparkEnvironment, widget.OWWidget):
@@ -73,5 +73,6 @@ class OWSparkContext(SparkEnvironment, widget.OWWidget):
             self.saved_gui_params[key] = parameter.get_value()
 
         self.sc = SparkContext(conf=self.conf)
+        self.sqlContext = SQLContext(self.sc)
         self.hc = HiveContext(self.sc)
         self.hide()
