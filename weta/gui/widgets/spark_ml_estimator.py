@@ -14,11 +14,6 @@ class OWSparkEstimator(OWSparkTransformer):
 
     get_modules = get_estimators
 
-    def apply(self):
-        method_instance = self.method()
-        paramMap = self.build_param_map(method_instance)
-        self.out_model = method_instance.fit(self.in_df, params = paramMap)
-        self.send("Model", self.out_model)
-        self.update_saved_gui_parameters()
-        self.hide()
+    def go(self, method_instance, paramMap):
+        self.out_model = method_instance.fit(self.input_data_frame, params=paramMap)
 

@@ -53,7 +53,6 @@ if __name__ == '__main__':
         license=LICENSE,
         packages=['weta',
                   'weta.gui',
-                  'weta.gui.base',
                   'weta.gui.utils',
                   'weta.gui.tutorials',
                   'weta.gui.widgets',

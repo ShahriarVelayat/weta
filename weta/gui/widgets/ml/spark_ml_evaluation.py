@@ -43,11 +43,11 @@ class OWSparkMLEvaluator(OWSparkTransformer, widget.OWWidget):
         method_instance = self.method()
         paramMap = self.build_param_map(method_instance)
 
-        if self.in_df:
+        if self.input_data_frame:
             for metric in metric_names:
                 metricName = self.ui_parameters['metricName'].get_param_name()
                 paramMap[metricName] = metric
-                values[metric] = method_instance.apply(self.in_df, paramMap)
+                values[metric] = method_instance.apply(self.input_data_frame, paramMap)
         else:
             for k in metric_names:
                 values[k] = round(5 * random.random() - 2.5, 2)
