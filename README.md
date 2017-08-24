@@ -26,7 +26,7 @@ P.S. Weta is also a kind of insect in New Zealand.
 
 ![](screenshot1.png)
 
-![](screenshot2.png)
+![](screenshot3.png)
 
 Features
 --------
