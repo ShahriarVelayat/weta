@@ -1,5 +1,5 @@
 import pyspark
-from AnyQt import QtCore
+from AnyQt import QtCore, QtWidgets
 from Orange.widgets import widget, gui
 from Orange.widgets.settings import Setting
 from collections import OrderedDict
@@ -48,11 +48,20 @@ class SparkTransformer(SparkEnvironment):#, widget.OWWidget):
     want_main_area = False
     resizing_enabled = True
 
+    box_text = ''
+
     def __init__(self):
         # Create parameters Box.
         self.v_main_box = gui.widgetBox(self.controlArea, orientation='horizontal', addSpace=True)
         self.v_setting_box = gui.widgetBox(self.v_main_box, self.box_text, addSpace=True)
         self.v_help_box = gui.widgetBox(self.v_main_box, 'Documentation', addSpace=True)
+
+        # Create learner doc.
+        self.v_method_info_text = QtWidgets.QTextEdit(self.learner_class.__doc__, self.v_help_box)
+        self.v_method_info_text.setAcceptRichText(True)
+        self.v_method_info_text.setReadOnly(True)
+        self.v_method_info_text.autoFormatting()
+        self.v_help_box.layout().addWidget(self.v_method_info_text)
 
         # info area
         self.v_info_box = gui.widgetBox(self.v_setting_box, 'Info:', addSpace=True)

@@ -11,9 +11,7 @@ class OWSparkRegression(SparkEstimator, widget.OWWidget):
     description = "regression algorithms"
     icon = "../icons/Regression.svg"
 
-    # module = regression
-    # module_name = 'regression'
-    box_text = "Spark Regression Algorithms"
+    box_text = "Spark Linear Regression Algorithm"
 
     learner_class = regression.LinearRegression
     learner_parameters = OrderedDict({

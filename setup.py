@@ -60,7 +60,7 @@ if __name__ == '__main__':
                   'weta.gui.widgets.learn'],
         package_data={
             'weta.gui': ['tutorials/*.ows'],
-            'weta.gui.widgets': ['icons/*'],
+            'weta.gui.widgets': ['icons/*', 'assets/*'],
         },
         install_requires=[
             'Orange3',

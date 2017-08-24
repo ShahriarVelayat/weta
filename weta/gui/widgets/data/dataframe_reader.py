@@ -4,6 +4,7 @@ from Orange.widgets import widget, gui, settings
 
 from ..spark_environment import SparkEnvironment
 
+
 class Parameter:
     def __init__(self, name, default_value='', type='str', widget_type='text_edit', data=None):
         self.name = name
@@ -12,12 +13,13 @@ class Parameter:
         self.widget_type = widget_type
         self.data = data
 
+
 class OWDataFrameReader(SparkEnvironment, widget.OWWidget):
     priority = 1
 
-    name = 'Data Frame Reader'
-    description = 'Read supported format'
-    icon = "../icons/Table.svg"
+    name = 'DataFrame Reader'
+    description = 'Read supported file format to a DataFrame'
+    icon = "../assets/FileReader.svg"
 
     class Inputs:
         pass

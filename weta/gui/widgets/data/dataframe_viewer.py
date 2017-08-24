@@ -2,7 +2,7 @@ import pyspark.sql
 from Orange.widgets import widget, gui
 import pyspark
 from Orange.widgets import widget, gui, settings
-from AnyQt import QtWidgets
+from AnyQt import QtWidgets, QtGui
 
 from ..spark_environment import SparkEnvironment
 
@@ -13,7 +13,7 @@ class OWDataFrameViewer(SparkEnvironment, widget.OWWidget):
 
     name = "Data Frame Viewer"
     description = "View Spark Data frame"
-    icon = "../icons/Table.svg"
+    icon = "../assets/DataFrameViewer.svg"
 
     # --------------- Input/Output signals ---------------
     class Inputs:
@@ -30,8 +30,11 @@ class OWDataFrameViewer(SparkEnvironment, widget.OWWidget):
     def __init__(self):
         super().__init__()
         self.ui_view = QtWidgets.QTextEdit('', self.mainArea)
-        self.ui_view.setMinimumWidth(300)
-        self.ui_view.setMinimumHeight(400)
+        self.ui_view.setMinimumWidth(800)
+        self.ui_view.setMinimumHeight(600)
+        self.ui_view.setFont(QtGui.QFont('Monaco'))
+        self.mainArea.setMinimumWidth(800)
+        self.mainArea.setMinimumHeight(600)
 
     @Inputs.data_frame
     def set_input_data_frame(self, df):
