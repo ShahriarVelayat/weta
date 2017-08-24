@@ -230,13 +230,13 @@ class OWPySparkScript(SparkEnvironment, widget.OWWidget):
         super().__init__()
 
         self.spark_logo = """
-      ____              __
-     / __/__  ___ _____/ /__
-    _\ \/ _ \/ _ `/ __/  '_/
-   /__ / .__/\_,_/_/ /_/\_\   version {version}
-      /_/
-
-""".format(version=self.sc.version)
+              ____              __
+             / __/__  ___ _____/ /__
+            _\ \/ _ \/ _ `/ __/  '_/
+           /__ / .__/\_,_/_/ /_/\_\   version {version}
+              /_/
+    
+        """.format(version=2.2)#self.sc.version)
 
         for s in self.libraryListSource:
             s.flags = 0
@@ -341,15 +341,17 @@ class OWPySparkScript(SparkEnvironment, widget.OWWidget):
         select_row(self.libraryView, self.currentScriptIndex)
 
         self.splitCanvas.setSizes([2, 1])
-        if self.splitterState is not None:
-            self.splitCanvas.restoreState(QByteArray(self.splitterState))
-
-        self.splitCanvas.splitterMoved[int, int].connect(self.onSpliterMoved)
+        # if self.splitterState is not None:
+        #     self.splitCanvas.restoreState(QByteArray(self.splitterState))
+        #
+        # self.splitCanvas.splitterMoved[int, int].connect(self.onSpliterMoved)
         self.controlArea.layout().addStretch(1)
         self.resize(800, 600)
 
     def setObject(self, obj):
         self.in_object = obj
+        self.console.kernel.shell.push({'in_object': self.in_object})
+
 
     def handleNewSignals(self):
         self.unconditional_commit()
@@ -466,4 +468,5 @@ class OWPySparkScript(SparkEnvironment, widget.OWWidget):
     def commit(self):
         self._script = str(self.text.toPlainText())
         self.console.execute(self._script)
+        self.out_object = self.console.kernel.shell.user_ns['out_object']
         self.send("out_object", self.out_object)

@@ -34,3 +34,10 @@ b = B()
 print(b.name)
 print(getattr(b, 'name'))
 print(b.__dict__)
+
+
+def foo(a, **kwargs):
+    print(type(kwargs))
+    print(kwargs)
+
+foo(a=1)

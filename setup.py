@@ -19,7 +19,7 @@ ENTRY_POINTS = {
         # Widget category specification can be seen in
         #    weta/gui/widgets/__init__.py
         'Weta Data = weta.gui.widgets.data',
-        'Weta Learn = weta.gui.widgets.ml'
+        'Weta Learn = weta.gui.widgets.learn'
     ),
 
     # Register widget help
@@ -57,7 +57,7 @@ if __name__ == '__main__':
                   'weta.gui.tutorials',
                   'weta.gui.widgets',
                   'weta.gui.widgets.data',
-                  'weta.gui.widgets.ml'],
+                  'weta.gui.widgets.learn'],
         package_data={
             'weta.gui': ['tutorials/*.ows'],
             'weta.gui.widgets': ['icons/*'],

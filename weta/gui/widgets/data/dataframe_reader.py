@@ -25,9 +25,10 @@ class OWDataFrameReader(SparkEnvironment, widget.OWWidget):
     class Outputs:
         data_frame = widget.Output('DataFrame', pyspark.sql.DataFrame)
 
-    FORMAT_LIST = [
-        ('CSV', 'com.databricks.spark.csv')
-    ]
+    FORMAT_LIST = tuple([
+        ('CSV', 'com.databricks.spark.csv'),
+        ('LibSVM', 'libsvm'),
+    ])
     OPTIONS_LIST = [
         Parameter('header', 'true', 'Include Header?', 'str')
     ]
