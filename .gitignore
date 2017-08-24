@@ -4,3 +4,5 @@ weta.egg-info
 MANIFEST.in
 __pycache__
 metastore_db
+weta/gui/widgets/ml/**/*
+weta/gui/widgets/spark_ml_*
