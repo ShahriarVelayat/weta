@@ -11,8 +11,8 @@ from weta.gui.widgets.spark_environment import SparkEnvironment
 
 class OWSparkContext(SparkEnvironment, widget.OWWidget):
     priority = 0
-    name = "Context"
-    description = "Create a shared Spark (sc) and Hive (hc) Contexts"
+    name = "Spark Config"
+    description = "Configure the shared contexts: SparkContext (sc), SqlContext (sqlContext) and  HiveContext (hc)"
     icon = "../icons/spark.png"
 
     want_main_area = False

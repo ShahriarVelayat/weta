@@ -1,12 +1,12 @@
 from Orange.widgets import widget
 from pyspark.ml import feature
 from collections import OrderedDict
-from ..spark_estimator import SparkTransformer
-from ..spark_transformer import Parameter, setup_parameter_settings
+from weta.gui.widgets.spark_estimator import SparkTransformer
+from weta.gui.widgets.spark_transformer import Parameter, setup_parameter_settings
 
 
 class OWIDF(SparkTransformer, widget.OWWidget):
-    priority = 3
+    priority = 21
     name = "IDF"
     description = "Document IDF transformer"
     icon = "../assets/IDF.svg"

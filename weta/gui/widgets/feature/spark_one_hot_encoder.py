@@ -1,15 +1,15 @@
 from Orange.widgets import widget
 from pyspark.ml import feature
 from collections import OrderedDict
-from ..spark_estimator import SparkTransformer
-from ..spark_transformer import Parameter, setup_parameter_settings
+from weta.gui.widgets.spark_estimator import SparkTransformer
+from weta.gui.widgets.spark_transformer import Parameter, setup_parameter_settings
 
 
 class OWOneHotEncoder(SparkTransformer, widget.OWWidget):
-    priority = 2
-    name = "One Hot Encoder"
-    description = "One Hot Encoder"
-    icon = "../assets/BagOfWords.svg"
+    priority = 11
+    name = "One-Hot Encoder"
+    description = "One-Hot Encoder"
+    icon = "../assets/OneHotEncoder.svg"
 
     box_text = 'One Hot Encoder'
 

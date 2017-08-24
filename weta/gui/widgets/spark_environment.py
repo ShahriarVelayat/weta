@@ -1,28 +1,52 @@
+from collections import OrderedDict
+from pyspark import SparkConf, SparkContext, SQLContext, HiveContext
+
 class SparkEnvironment:
+    _conf = SparkConf()
     _sc = None
     _hc = None
     _sqlContext = None
 
     @property
     def sc(self):
-        return SparkEnvironment._sc
+        if self._sc is None:
+            self.create_context()
 
-    @sc.setter
-    def sc(self, val):
-        SparkEnvironment._sc = val
+        return SparkEnvironment._sc
 
     @property
     def sqlContext(self):
+        if self._sqlContext is None:
+            self.create_context()
         return SparkEnvironment._sqlContext
-
-    @sqlContext.setter
-    def sqlContext(self, val):
-        SparkEnvironment._sqlContext = val
 
     @property
     def hc(self):
+        if self._hc is None:
+            self.create_context()
         return SparkEnvironment._hc
 
-    @hc.setter
-    def hc(self, val):
-        SparkEnvironment._hc = val
+    @staticmethod
+    def create_context(parameters=None):
+        if parameters is None:
+            parameters = OrderedDict()
+            parameters['spark.app.name'] = 'weta_workflow'
+            parameters['spark.master'] = 'local'  # 'yarn'
+            parameters["spark.executor.instances"] = "8"
+            parameters["spark.executor.cores"] = "4"
+            parameters["spark.executor.memory"] = "8g"
+            parameters["spark.driver.cores"] = "4"
+            parameters["spark.driver.memory"] = "2g"
+            parameters["spark.logConf"] = "false"
+            parameters["spark.app.id"] = "dummy"
+
+        cls = SparkEnvironment
+        if cls._sc:
+            cls._sc.stop()
+
+        for key, parameter in parameters.items():
+            cls._conf.set(key, parameter)
+
+        cls._sc = SparkContext(conf=cls._conf)
+        cls._sqlContext = SQLContext(cls._sc)
+        cls._hc = HiveContext(cls._sc)

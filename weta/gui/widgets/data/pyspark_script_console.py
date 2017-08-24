@@ -331,7 +331,7 @@ class OWPySparkScript(SparkEnvironment, widget.OWWidget):
         self.splitCanvas.addWidget(self.consoleBox)
 
         # self.console = PySparkConsole(self.__dict__, self, sc = self.sc)
-        self.console = EmbedIPython(sc=self._sc, hc=self._hc, in_object=self.in_object, out_object=self.out_object)
+        self.console = EmbedIPython(sc=self.sc, hc=self.hc, sqlContext=self.sqlContext, in_object=self.in_object, out_object=self.out_object)
         # self.console.kernel.shell.run_cell('%pylab qt')
         self.console.kernel.shell.run_cell("print('{sparklogo}')".format(sparklogo = self.spark_logo))
 

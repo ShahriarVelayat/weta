@@ -5,16 +5,17 @@ from weta.gui.widgets.spark_estimator import SparkTransformer
 from weta.gui.widgets.spark_transformer import Parameter, setup_parameter_settings
 
 
-class OWTokenizer(SparkTransformer, widget.OWWidget):
-    priority = 1
-    name = "Tokenizer"
-    description = "Tokenizer"
-    icon = "../assets/Tokenizer.svg"
+class OWNGram(SparkTransformer, widget.OWWidget):
+    priority = 2
+    name = "NGram"
+    description = "NGram"
+    icon = "../assets/NGram.svg"
 
-    box_text = 'Tokenizer'
+    box_text = 'NGram'
 
-    learner_class = feature.Tokenizer
+    learner_class = feature.NGram
     learner_parameters = OrderedDict({
+        'n': Parameter(int, 2, 'N'),
         'inputCol': Parameter(str, 'text', 'Input column', data_column=True),
         'outputCol': Parameter(str, 'tokens', 'Output column'),
     })

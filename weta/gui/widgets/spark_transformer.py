@@ -1,5 +1,5 @@
 import pyspark
-from AnyQt import QtCore, QtWidgets
+from AnyQt import QtCore, QtWidgets, QtGui
 from Orange.widgets import widget, gui
 from Orange.widgets.settings import Setting
 from collections import OrderedDict
@@ -55,12 +55,18 @@ class SparkTransformer(SparkEnvironment):#, widget.OWWidget):
         self.v_main_box = gui.widgetBox(self.controlArea, orientation='horizontal', addSpace=True)
         self.v_setting_box = gui.widgetBox(self.v_main_box, self.box_text, addSpace=True)
         self.v_help_box = gui.widgetBox(self.v_main_box, 'Documentation', addSpace=True)
+        self.v_main_box.setMinimumHeight(500)
+        self.v_setting_box.setMaximumWidth(300)
+        self.v_help_box.setMinimumWidth(600)
 
         # Create learner doc.
-        self.v_method_info_text = QtWidgets.QTextEdit(self.learner_class.__doc__, self.v_help_box)
+        self.v_method_info_text = QtWidgets.QTextEdit('<pre>'+self.learner_class.__doc__+'</pre>', self.v_help_box)
         self.v_method_info_text.setAcceptRichText(True)
         self.v_method_info_text.setReadOnly(True)
         self.v_method_info_text.autoFormatting()
+        font = QtGui.QFont('Menlo, Consolas, Courier', 11)
+        self.v_method_info_text.setFont(font)
+
         self.v_help_box.layout().addWidget(self.v_method_info_text)
 
         # info area
@@ -134,5 +140,6 @@ class SparkTransformer(SparkEnvironment):#, widget.OWWidget):
         self.hide()
 
     def _apply(self, learner, params):
-        self.output_data_frame = learner.transform(self.input_data_frame, params=params)
+        learner.setParams(**params)
+        self.output_data_frame = learner.transform(self.input_data_frame)
         self.Outputs.data_frame.send(self.output_data_frame)
