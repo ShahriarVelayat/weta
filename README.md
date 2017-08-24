@@ -21,6 +21,9 @@ algorithms to ease text analytics tasks.
 - Misc.: persistence, visual pipeline building, batch running
 - Workbench: codeless workflow building on canvas
 
+![](screenshot1.png)
+
+![](screenshot2.png)
 
 Features
 --------
