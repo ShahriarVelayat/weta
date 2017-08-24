@@ -17,7 +17,7 @@ class Parameter:
 class OWDataFrameReader(SparkEnvironment, widget.OWWidget):
     priority = 1
 
-    name = 'DataFrame Reader'
+    name = 'Data Reader'
     description = 'Read supported file format to a DataFrame'
     icon = "../assets/FileReader.svg"
 

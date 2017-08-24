@@ -62,3 +62,7 @@ word embeddings
 
 DSSM
 DSSM
+
+## Credits
+
+The GUI is proudly powered by [Orange3](http://orange.biolab.si).

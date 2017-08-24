@@ -11,7 +11,7 @@ class OWDataFrameViewer(SparkEnvironment, widget.OWWidget):
     # --------------- Widget metadata protocol ---------------
     priority = 2
 
-    name = "Data Frame Viewer"
+    name = "Data Viewer"
     description = "View Spark Data frame"
     icon = "../assets/DataFrameViewer.svg"
 
