@@ -2,3 +2,5 @@
 .DS_Store
 weta.egg-info
 MANIFEST.in
+__pycache__
+metastore_db
