@@ -1,4 +1,4 @@
-WETA
+![](weta.png)WETA 
 ======================
 
 - What is WETA?
@@ -9,6 +9,9 @@ It is an abstract layer standing on the gaits' shoulders, including a variety of
 tools and Spark ecosystem.
 The aim is to integrate them in data representation, API, workflow/pipeline, and facilitate these solid but usually overlaid
 algorithms to ease text analytics tasks.
+
+P.S. Weta is also a kind of insect in New Zealand.
+
 
 ## Building blocks
 
@@ -66,3 +69,4 @@ DSSM
 ## Credits
 
 The GUI is proudly powered by [Orange3](http://orange.biolab.si).
+

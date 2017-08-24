@@ -6,3 +6,4 @@ __pycache__
 metastore_db
 weta/gui/widgets/ml/**/*
 weta/gui/widgets/spark_ml_*
+weta/gui/widgets/icons/*

@@ -5,11 +5,11 @@ from ..spark_estimator import SparkEstimator
 from ..spark_transformer import Parameter, setup_parameter_settings
 
 
-class OWSparkRegression(SparkEstimator, widget.OWWidget):
-    priority = 3
+class OWLinearRegression(SparkEstimator, widget.OWWidget):
+    priority = 101
     name = "Linear Regression"
     description = "Linear Regression Algorithm"
-    icon = "../icons/Regression.svg"
+    icon = "../assets/LinearRegression.svg"
 
     box_text = "Linear Regression"
 
