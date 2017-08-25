@@ -5,7 +5,7 @@ from Orange.widgets.settings import Setting
 from pyspark import SparkConf, SparkContext
 from pyspark.sql import SQLContext, HiveContext
 
-from weta.gui.base.spark_environment import SparkEnvironment
+from weta.gui.spark_environment import SparkEnvironment
 from weta.gui.utils.gui_utils import ParameterWidget
 
 

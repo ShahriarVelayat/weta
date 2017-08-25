@@ -2,9 +2,9 @@ from collections import OrderedDict
 
 from Orange.widgets import widget
 from pyspark.ml import classification
+from weta.gui.spark_base import Parameter
 
-from weta.gui.base.spark_estimator import SparkEstimator
-from weta.gui.base.spark_base import Parameter
+from weta.gui.spark_estimator import SparkEstimator
 
 
 class OWDecisionTreeClassifier(SparkEstimator, widget.OWWidget):

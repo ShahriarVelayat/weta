@@ -3,7 +3,7 @@ import pyspark.sql
 from AnyQt import QtCore
 from Orange.widgets import widget, gui
 
-from weta.gui.base.spark_environment import SparkEnvironment
+from weta.gui.spark_environment import SparkEnvironment
 
 
 class OWDataFrameViewer(SparkEnvironment, widget.OWWidget):
@@ -59,6 +59,7 @@ class OWDataFrameViewer(SparkEnvironment, widget.OWWidget):
         if not self._check_input():
             return
 
+        self.clear_messages()
         df = self.input_data_frame  # type: pyspark.sql.DataFrame
 
         # show data

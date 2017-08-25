@@ -203,7 +203,7 @@ def select_row(view, row):
                     QItemSelectionModel.ClearAndSelect)
 
 
-from weta.gui.base.spark_environment import SparkEnvironment
+from weta.gui.spark_environment import SparkEnvironment
 
 
 class OWPySparkScript(SparkEnvironment, widget.OWWidget):

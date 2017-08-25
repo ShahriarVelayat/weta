@@ -1,7 +1,7 @@
 from Orange.widgets import widget
 from pyspark.ml import Model
 
-from weta.gui.base.spark_transformer import SparkTransformer
+from weta.gui.spark_transformer import SparkTransformer
 
 
 class SparkModelTransformer(SparkTransformer, widget.OWWidget):

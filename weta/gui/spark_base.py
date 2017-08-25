@@ -12,22 +12,17 @@ class Parameter:
 
 from collections import OrderedDict
 
-import pyspark
 from AnyQt import QtWidgets, QtGui
-from Orange.widgets import widget, gui
+from Orange.widgets import gui
 from Orange.widgets.settings import Setting
 
-from weta.gui.base.spark_environment import SparkEnvironment
+from weta.gui.spark_environment import SparkEnvironment
 
 
 class SparkBase(SparkEnvironment):
     """
     Base Widget: mainly handle parameter settings
     """
-
-    name = "Base"
-    description = "Base Widget"
-    icon = "icons/spark.png"
 
     want_main_area = False
     resizing_enabled = True

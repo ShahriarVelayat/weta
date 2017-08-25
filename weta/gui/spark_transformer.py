@@ -23,9 +23,8 @@ class SparkTransformer(SparkBase):
     resizing_enabled = True
 
     def __init__(self):
-        super(SparkTransformer, self).__init__()
-
         self.doc = self.learner.__doc__ if self.learner is not None else ''
+        super(SparkTransformer, self).__init__()
 
     @Inputs.data_frame
     def set_input_data_frame(self, data_frame):
