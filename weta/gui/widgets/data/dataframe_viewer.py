@@ -1,10 +1,9 @@
-import pyspark.sql
-from Orange.widgets import widget, gui
 import pyspark
-from Orange.widgets import widget, gui, settings
-from AnyQt import QtWidgets, QtGui
+import pyspark.sql
+from AnyQt import QtCore
+from Orange.widgets import widget, gui
 
-from ..spark_environment import SparkEnvironment
+from weta.gui.base.spark_environment import SparkEnvironment
 
 
 class OWDataFrameViewer(SparkEnvironment, widget.OWWidget):
@@ -16,6 +15,7 @@ class OWDataFrameViewer(SparkEnvironment, widget.OWWidget):
     icon = "../assets/DataFrameViewer.svg"
 
     # --------------- Input/Output signals ---------------
+    input_data_frame: pyspark.sql.DataFrame = None
     class Inputs:
         data_frame = widget.Input("DataFrame", pyspark.sql.DataFrame)
 
@@ -23,30 +23,65 @@ class OWDataFrameViewer(SparkEnvironment, widget.OWWidget):
         data_frame = widget.Output("DataFrame", pyspark.sql.DataFrame)
 
     # --------------- UI layout settings ---------------
-    want_control_area = False
+    want_control_area = True
 
     # --------------- Settings ---------------
 
     def __init__(self):
         super().__init__()
-        self.ui_view = QtWidgets.QTextEdit('', self.mainArea)
-        self.ui_view.setMinimumWidth(800)
-        self.ui_view.setMinimumHeight(600)
-        self.ui_view.setFont(QtGui.QFont('Monaco'))
-        self.mainArea.setMinimumWidth(800)
+        self.controlArea.setMinimumWidth(250)
+        self.v_info_box = gui.vBox(self.controlArea, 'Info')
+        self.v_info = gui.label(self.v_info_box, self, '')
+        self.v_info.setAlignment(QtCore.Qt.AlignTop)
+
+        self.mainArea.setMinimumWidth(600)
         self.mainArea.setMinimumHeight(600)
+
+        self.v_table = gui.table(self.mainArea, 0, 0)
 
     @Inputs.data_frame
     def set_input_data_frame(self, df):
-        self.Inputs.data_frame.data = df
+        self.input_data_frame = df
 
     # called after received all inputs
     def handleNewSignals(self):
-        self.commit()
+        self.apply()
+
+    def _check_input(self):
+        if self.input_data_frame is None:
+            self.warning('Input data does not exist')
+            return False
+        else:
+            return True
 
     # this is the logic: computation, update UI, send outputs. ..
-    def commit(self):
-        if self.Inputs.data_frame.data is not None:
-            df = self.Inputs.data_frame.data
-            self.ui_view.setText(df._jdf.showString(20, 20))
-            self.Outputs.data_frame.send(df)
+    def apply(self):
+        if not self._check_input():
+            return
+
+        df = self.input_data_frame  # type: pyspark.sql.DataFrame
+
+        # show data
+        columns = df.columns
+
+        self.v_info.setText(self.get_info())
+
+        self.v_table.setRowCount(0)
+        self.v_table.setColumnCount(len(columns))
+        self.v_table.setHorizontalHeaderLabels(columns)
+        for i, row in enumerate(df.head(n=1000)):  # show top 1000 rows
+            self.v_table.insertRow(i)
+            for j, column in enumerate(df.columns):
+                gui.tableItem(self.v_table, i, j, str(row[column]))
+
+        self.Outputs.data_frame.send(df)
+
+    def get_info(self):
+        df = self.input_data_frame
+        columns = df.columns
+        return '''
+Rows: %d 
+Columns: %d
+Types: 
+    %s
+       ''' % (df.count(), len(columns), '\n    '.join([t[0] + ' - ' + t[1] for t in df.dtypes]))

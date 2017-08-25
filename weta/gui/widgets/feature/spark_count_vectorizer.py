@@ -4,28 +4,31 @@ from Orange.widgets import widget
 from pyspark.ml import feature
 from weta.gui.base.spark_base import Parameter
 
-from weta.gui.base.spark_estimator import SparkTransformer
+from weta.gui.base.spark_estimator import SparkEstimator
 
 
-class OWOneHotEncoder(SparkTransformer, widget.OWWidget):
-    priority = 12
-    name = "One-Hot Encoder"
-    description = "One-Hot Encoder"
+class OWCountVectorizer(SparkEstimator, widget.OWWidget):
+    priority = 11
+    name = "Count Vectorizer"
+    description = "Count Vectorizer"
     icon = "../assets/OneHotEncoder.svg"
 
-    box_text = 'One Hot Encoder'
+    box_text = 'Count Vectorizer'
 
-    learner = feature.OneHotEncoder
+    learner = feature.CountVectorizer
     parameters = OrderedDict({
-        'dropLast': Parameter(bool, True, 'Drop the last category'),
         'inputCol': Parameter(str, 'tokens', 'Input column', data_column=True),
-        'outputCol': Parameter(str, 'features', 'Output column'),
+        'outputCol': Parameter(str, 'feature', 'Output1 column'),
+        'minTF': Parameter(float, 1.0, 'Minimum term frequency'),
+        'minDF': Parameter(float, 1.0, 'Minimum document frequency'),
+        'vocabSize': Parameter(int, 1 << 18, 'Vocabulary size'),
+        'binary': Parameter(bool, False, 'Binary'),
     })
 
     def _validate_parameters(self):
-        if not super(OWOneHotEncoder, self)._validate_parameters():
+        if not super(OWCountVectorizer, self)._validate_parameters():
             return False
-        
+
         df = self.input_data_frame
         input_column = self.inputCol
         output_column = self.outputCol

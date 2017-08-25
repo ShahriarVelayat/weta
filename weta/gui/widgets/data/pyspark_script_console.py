@@ -4,7 +4,7 @@ import sys
 import unicodedata
 
 from AnyQt import QtGui, QtWidgets
-from AnyQt.QtCore import Qt, QRegExp, QByteArray, QItemSelectionModel
+from AnyQt.QtCore import Qt, QRegExp, QItemSelectionModel
 from AnyQt.QtGui import (
     QFont, QColor, QPalette, QKeySequence
 )
@@ -203,7 +203,7 @@ def select_row(view, row):
                     QItemSelectionModel.ClearAndSelect)
 
 
-from weta.gui.widgets.spark_environment import SparkEnvironment
+from weta.gui.base.spark_environment import SparkEnvironment
 
 
 class OWPySparkScript(SparkEnvironment, widget.OWWidget):

@@ -1,8 +1,10 @@
+from collections import OrderedDict
+
 from Orange.widgets import widget
 from pyspark.ml import feature
-from collections import OrderedDict
-from weta.gui.widgets.spark_estimator import SparkTransformer
-from weta.gui.widgets.spark_transformer import Parameter, setup_parameter_settings
+from weta.gui.base.spark_base import Parameter
+
+from weta.gui.base.spark_estimator import SparkTransformer
 
 
 class OWStopWordsRemover(SparkTransformer, widget.OWWidget):
@@ -13,11 +15,27 @@ class OWStopWordsRemover(SparkTransformer, widget.OWWidget):
 
     box_text = 'StopWords Remover'
 
-    learner_class = feature.StopWordsRemover
-    learner_parameters = OrderedDict({
+    learner = feature.StopWordsRemover
+    parameters = OrderedDict({
         'inputCol': Parameter(str, 'text', 'Input column', data_column=True),
         'outputCol': Parameter(str, 'tokens', 'Output column'),
         'stopWords': Parameter(list, None, 'Stopwords list'),
         'caseSensitive': Parameter(bool, False, 'Case sensitive'),
     })
-    setup_parameter_settings(learner_parameters)
+
+    def _validate_parameters(self):
+        if not super(OWStopWordsRemover, self)._validate_parameters():
+            return False
+
+        df = self.input_data_frame
+        input_column = self.inputCol
+        output_column = self.outputCol
+        types = dict(df.dtypes)
+        if types[input_column] != 'array<string>':
+            self.error('Input column must be array<string> type')
+            return False
+        elif output_column in df.columns:
+            self.error('Output column must not override an existing one')
+            return False
+        else:
+            return True

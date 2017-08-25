@@ -1,11 +1,13 @@
+from collections import OrderedDict
+
 from Orange.widgets import widget
 from pyspark.ml import feature
-from collections import OrderedDict
-from weta.gui.widgets.spark_estimator import SparkTransformer
-from weta.gui.widgets.spark_transformer import Parameter, setup_parameter_settings
+from weta.gui.base.spark_base import Parameter
+
+from weta.gui.base.spark_estimator import SparkEstimator
 
 
-class OWIDF(SparkTransformer, widget.OWWidget):
+class OWIDF(SparkEstimator, widget.OWWidget):
     priority = 21
     name = "IDF"
     description = "Document IDF transformer"
@@ -13,12 +15,11 @@ class OWIDF(SparkTransformer, widget.OWWidget):
 
     box_text = 'Inverse Document Frequency'
 
-    learner_class = feature.IDF
-    learner_parameters = OrderedDict({
-        'minDocFreq': Parameter(int, 0, 'Minimal document frequency'),
+    learner = feature.IDF
+    parameters = OrderedDict({
+        'minDocFreq': Parameter(int, 0, 'Minimum document frequency'),
         'inputCol': Parameter(str, 'tf', 'Input column', data_column=True),
         'outputCol': Parameter(str, 'idf', 'Output column'),
     })
-    setup_parameter_settings(learner_parameters)
 
 

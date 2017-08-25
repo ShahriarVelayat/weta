@@ -1,7 +1,7 @@
 import pyspark
 from Orange.widgets import widget
 
-from weta.gui.widgets.spark_environment import SparkEnvironment
+from weta.gui.base.spark_environment import SparkEnvironment
 
 
 class OWSparkMLMOdel(SparkEnvironment, widget.OWWidget):

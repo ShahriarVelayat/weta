@@ -7,8 +7,8 @@ from Orange.widgets import widget, gui
 from Orange.widgets.settings import Setting
 from Orange.widgets.widget import OWWidget
 
+from weta.gui.base.spark_environment import SparkEnvironment
 from weta.gui.utils.data_utils import pandas_to_orange, format_sql
-from weta.gui.widgets.spark_environment import SparkEnvironment
 
 
 def convert_dataframe_to_orange(df):
