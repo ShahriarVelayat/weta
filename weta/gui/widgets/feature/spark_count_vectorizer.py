@@ -18,7 +18,7 @@ class OWCountVectorizer(SparkEstimator, widget.OWWidget):
     learner = feature.CountVectorizer
     parameters = OrderedDict({
         'inputCol': Parameter(str, 'tokens', 'Input column', data_column=True),
-        'outputCol': Parameter(str, 'feature', 'Output1 column'),
+        'outputCol': Parameter(str, 'vector', 'Output1 column'),
         'minTF': Parameter(float, 1.0, 'Minimum term frequency'),
         'minDF': Parameter(float, 1.0, 'Minimum document frequency'),
         'vocabSize': Parameter(int, 1 << 18, 'Vocabulary size'),

@@ -1,4 +1,10 @@
+from collections import OrderedDict
 
+from AnyQt import QtWidgets, QtGui
+from Orange.widgets import gui
+from Orange.widgets.settings import Setting
+
+from weta.gui.spark_environment import SparkEnvironment
 
 class Parameter:
     def __init__(self, type, default_value, label, description='', items=None, data_column=False):
@@ -8,15 +14,6 @@ class Parameter:
         self.description = description
         self.items = items
         self.data_column = data_column
-
-
-from collections import OrderedDict
-
-from AnyQt import QtWidgets, QtGui
-from Orange.widgets import gui
-from Orange.widgets.settings import Setting
-
-from weta.gui.spark_environment import SparkEnvironment
 
 
 class SparkBase(SparkEnvironment):
@@ -69,7 +66,7 @@ class SparkBase(SparkEnvironment):
             elif parameter.data_column:
                 items = tuple([parameter.default_value])
                 gui.comboBox(self.v_parameters_box, self, name, label=parameter.label, labelWidth=300,
-                             valueType=parameter.type, items=items, editable=True)
+                             valueType=parameter.type, items=items, editable=True, sendSelectedValue=True)
             else:
                 gui.lineEdit(self.v_parameters_box, self, name, parameter.label, labelWidth=300,
                              valueType=parameter.type)

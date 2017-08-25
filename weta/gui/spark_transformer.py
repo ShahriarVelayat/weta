@@ -56,8 +56,8 @@ class SparkTransformer(SparkBase):
                     combo.setEditable = False
                     combo.clear()
                     combo.addItems(columns)
-                    combo.setCurrentIndex(columns.index(saved_value))
-                    # setattr(self, name, saved_value)
+                    # combo.setCurrentIndex(columns.index(saved_value))
+                    setattr(self, name, saved_value)
             return True
 
     def _apply(self, params):

@@ -22,4 +22,19 @@ class OWIDF(SparkEstimator, widget.OWWidget):
         'outputCol': Parameter(str, 'idf', 'Output column'),
     })
 
+    def _validate_parameters(self):
+        if not super(OWIDF, self)._validate_parameters():
+            return False
 
+        df = self.input_data_frame
+        input_column = self.inputCol
+        output_column = self.outputCol
+        types = dict(df.dtypes)
+        if types[input_column] != 'vector':
+            self.error('Input column must be vector type')
+            return False
+        elif output_column in df.columns:
+            self.error('Output column must not override an existing one')
+            return False
+        else:
+            return True

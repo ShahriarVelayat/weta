@@ -2,6 +2,7 @@ import pyspark
 import pyspark.sql
 from AnyQt import QtCore
 from Orange.widgets import widget, gui
+from pyspark.ml.linalg import Vector
 
 from weta.gui.spark_environment import SparkEnvironment
 
@@ -73,7 +74,12 @@ class OWDataFrameViewer(SparkEnvironment, widget.OWWidget):
         for i, row in enumerate(df.head(n=1000)):  # show top 1000 rows
             self.v_table.insertRow(i)
             for j, column in enumerate(df.columns):
-                gui.tableItem(self.v_table, i, j, str(row[column]))
+                value = row[column]
+                if isinstance(value, Vector):
+                    value = str(list(value.toArray())) # to dense array
+                else:
+                    value = str(value)
+                gui.tableItem(self.v_table, i, j, value)
 
         self.Outputs.data_frame.send(df)
 
