@@ -1,23 +1,19 @@
 from Orange.widgets import widget
-from pyspark.ml import Model
-from collections import OrderedDict
-
 from weta.gui.spark_base import Parameter
 from weta.gui.spark_transformer import SparkTransformer
+from collections import OrderedDict
+from pyspark.ml import Transformer
 
 
-class SparkModelTransformation(SparkTransformer, widget.OWWidget):
-    name = "Model Transformation"
-    description = "A Model Transformer of the Spark ml api"
-    icon = "../assets/ModelTransformation.svg"
+class SparkGenericTransformation(SparkTransformer, widget.OWWidget):
+    name = "Transformation"
+    description = "A Generic Transformer of the Spark ml api"
+    icon = "../assets/Transformation.svg"
 
     input_transformer = None
 
     class Inputs(SparkTransformer.Inputs):
-        transformer = widget.Input("Model", Model)
-
-    class Outputs(SparkTransformer.Outputs):
-        transformer = widget.Output("Model", Model)
+        transformer = widget.Input("Transformer", Transformer)
 
     parameters = OrderedDict({
         'inputCol': Parameter(str, 'input', 'Input column', data_column=True),
@@ -29,15 +25,13 @@ class SparkModelTransformation(SparkTransformer, widget.OWWidget):
         self.input_transformer = transformer
 
     def _validate_input(self):
-        if not super(SparkModelTransformation, self)._validate_input():
+        if not super(SparkGenericTransformation, self)._validate_input():
             return False
 
         if self.input_transformer is None:
-            self.error('Input Model does not exist')
+            self.error('Input Transformer does not exist')
             return False
 
-        # if self.inputCol not in self.input_data_frame.columns:
-        #     self.inputCol = self.input_transformer.inputCol
         self.input_dtype = self.input_transformer.input_dtype
         return True
 

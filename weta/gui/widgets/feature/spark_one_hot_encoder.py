@@ -8,7 +8,7 @@ from weta.gui.spark_estimator import SparkTransformer
 
 
 class OWOneHotEncoder(SparkTransformer, widget.OWWidget):
-    priority = 12
+    priority = 2
     name = "One-Hot Encoder"
     description = "One-Hot Encoder"
     icon = "../assets/OneHotEncoder.svg"
@@ -22,19 +22,21 @@ class OWOneHotEncoder(SparkTransformer, widget.OWWidget):
         'outputCol': Parameter(str, 'features', 'Output column'),
     })
 
-    def _validate_parameters(self):
-        if not super(OWOneHotEncoder, self)._validate_parameters():
-            return False
-        
-        df = self.input_data_frame
-        input_column = self.inputCol
-        output_column = self.outputCol
-        types = dict(df.dtypes)
-        if types[input_column] != 'array<string>':
-            self.error('Input column must be array<string> type')
-            return False
-        elif output_column in df.columns:
-            self.error('Output column must not override an existing one')
-            return False
-        else:
-            return True
+    input_dtype = 'array<string>'
+
+    # def _validate_parameters(self):
+    #     if not super(OWOneHotEncoder, self)._validate_parameters():
+    #         return False
+    #
+    #     df = self.input_data_frame
+    #     input_column = self.inputCol
+    #     output_column = self.outputCol
+    #     types = dict(df.dtypes)
+    #     if types[input_column] != 'array<string>':
+    #         self.error('Input column must be array<string> type')
+    #         return False
+    #     elif output_column in df.columns:
+    #         self.error('Output column must not override an existing one')
+    #         return False
+    #     else:
+    #         return True

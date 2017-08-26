@@ -20,20 +20,21 @@ class OWTokenizer(SparkTransformer, widget.OWWidget):
         'inputCol': Parameter(str, 'text', 'Input column', data_column=True),
         'outputCol': Parameter(str, 'tokens', 'Output column'),
     })
+    input_dtype = 'string'
 
-    def _validate_parameters(self):
-        if not super(OWTokenizer, self)._validate_parameters():
-            return False
-
-        df = self.input_data_frame
-        input_column = self.inputCol
-        output_column = self.outputCol
-        types = dict(df.dtypes)
-        if types[input_column] != 'string':
-            self.error('Input column must be string type')
-            return False
-        elif output_column in df.columns:
-            self.error('Output column must not override an existing one')
-            return False
-        else:
-            return True
+    # def _validate_parameters(self):
+    #     if not super(OWTokenizer, self)._validate_parameters():
+    #         return False
+    #
+    #     df = self.input_data_frame
+    #     input_column = self.inputCol
+    #     output_column = self.outputCol
+    #     types = dict(df.dtypes)
+    #     if types[input_column] != 'string':
+    #         self.error('Input column must be string type')
+    #         return False
+    #     elif output_column in df.columns:
+    #         self.error('Output column must not override an existing one')
+    #         return False
+    #     else:
+    #         return True

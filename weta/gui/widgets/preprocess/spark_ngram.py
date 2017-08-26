@@ -21,3 +21,4 @@ class OWNGram(SparkTransformer, widget.OWWidget):
         'inputCol': Parameter(str, 'text', 'Input column', data_column=True),
         'outputCol': Parameter(str, 'tokens', 'Output column'),
     })
+    input_dtype = 'string'

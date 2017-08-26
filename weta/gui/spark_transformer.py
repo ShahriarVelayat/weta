@@ -1,4 +1,5 @@
-import pyspark
+import pyspark.sql
+import pyspark.ml
 from Orange.widgets import widget, gui
 from .spark_base import SparkBase
 
@@ -12,11 +13,14 @@ class SparkTransformer(SparkBase):
         data_frame = widget.Input("DataFrame", pyspark.sql.DataFrame)
 
     output_data_frame = None
+    output_transformer = None
 
     class Outputs:
         data_frame = widget.Output("DataFrame", pyspark.sql.DataFrame)
+        transformer = widget.Output("Transformer", pyspark.ml.Transformer)
 
     learner = None  # type: type
+    input_dtype = None
 
     # -------------- Layout config ---------------
     want_main_area = False
@@ -60,8 +64,32 @@ class SparkTransformer(SparkBase):
                     setattr(self, name, saved_value)
             return True
 
+    def _validate_parameters(self):
+        if not super(SparkTransformer, self)._validate_parameters():
+            return False
+
+        df = self.input_data_frame
+        types = dict(df.dtypes)
+        if getattr(self, 'inputCol') is not None:
+            input_column = self.inputCol
+            if types[input_column] != self.input_dtype:
+                self.error('Input column must be %s type' % self.input_dtype)
+                return False
+        if getattr(self, 'outputCol') is not None:
+            output_column = self.outputCol
+            if output_column in df.columns:
+                self.error('Output column must not override an existing one')
+                return False
+
+        return True
+
     def _apply(self, params):
-        learner = self.learner()
-        learner.setParams(**params)
-        self.output_data_frame = learner.transform(self.input_data_frame)
+        transformer = self.learner()
+        transformer.setParams(**params)
+
+        self.output_transformer = transformer
+        self.output_transformer.input_dtype = self.input_dtype  # attach a required input dtype
+        self.output_data_frame = transformer.transform(self.input_data_frame)
+
         self.Outputs.data_frame.send(self.output_data_frame)
+        self.Outputs.transformer.send(self.output_transformer)
