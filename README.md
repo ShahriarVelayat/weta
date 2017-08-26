@@ -24,7 +24,7 @@ P.S. Weta is also a kind of insect in New Zealand.
 - Misc.: persistence, visual pipeline building, batch running
 - Workbench: codeless workflow building on canvas
 
-![](screenshot1.png)
+![](screenshot5.png)
 
 ![](screenshot3.png)
 
