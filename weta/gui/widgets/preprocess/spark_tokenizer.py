@@ -14,13 +14,14 @@ class OWTokenizer(SparkTransformer, widget.OWWidget):
     icon = "../assets/Tokenizer.svg"
 
     box_text = 'Tokenizer'
+    input_dtype = 'string'
 
     learner = feature.Tokenizer
     parameters = OrderedDict({
-        'inputCol': Parameter(str, 'text', 'Input column', data_column=True),
+        'inputCol': Parameter(str, 'text', 'Input column (%s)' % input_dtype, data_column=True),
         'outputCol': Parameter(str, 'tokens', 'Output column'),
     })
-    input_dtype = 'string'
+
 
     # def _validate_parameters(self):
     #     if not super(OWTokenizer, self)._validate_parameters():

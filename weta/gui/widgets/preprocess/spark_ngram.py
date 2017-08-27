@@ -14,11 +14,11 @@ class OWNGram(SparkTransformer, widget.OWWidget):
     icon = "../assets/NGram.svg"
 
     box_text = 'NGram'
+    input_dtype = 'string'
 
     learner = feature.NGram
     parameters = OrderedDict({
         'n': Parameter(int, 2, 'N'),
-        'inputCol': Parameter(str, 'text', 'Input column', data_column=True),
+        'inputCol': Parameter(str, 'text', 'Input column (%s)' % input_dtype, data_column=True),
         'outputCol': Parameter(str, 'tokens', 'Output column'),
     })
-    input_dtype = 'string'

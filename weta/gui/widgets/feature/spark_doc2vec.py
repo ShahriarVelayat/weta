@@ -14,10 +14,11 @@ class OWWord2Vec(SparkEstimator, widget.OWWidget):
     icon = "../assets/Word2Vec.svg"
 
     box_text = 'Count Vectorizer'
+    input_dtype = 'array<string>'
 
     learner = feature.Word2Vec
     parameters = OrderedDict({
-        'inputCol': Parameter(str, 'tokens', 'Input column', data_column=True),
+        'inputCol': Parameter(str, 'tokens', 'Input column (%s)' % input_dtype, data_column=True),
         'outputCol': Parameter(str, 'vector', 'Output1 column'),
         'vectorSize': Parameter(int, 100, 'Vector size'),
         'minCount': Parameter(int, 5, 'Minimum count'),
@@ -28,4 +29,3 @@ class OWWord2Vec(SparkEstimator, widget.OWWidget):
         'windowSize': Parameter(int, 5, 'Window size'),
         'maxSentenceLength': Parameter(int, 1000, 'Maximum sentence length'),
     })
-    input_dtype = 'array<string>'

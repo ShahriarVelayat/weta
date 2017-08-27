@@ -14,17 +14,18 @@ class OWCountVectorizer(SparkEstimator, widget.OWWidget):
     icon = "../assets/CountVectorizer.svg"
 
     box_text = 'Count Vectorizer'
+    input_dtype = 'array<string>'
 
     learner = feature.CountVectorizer
     parameters = OrderedDict({
-        'inputCol': Parameter(str, 'tokens', 'Input column', data_column=True),
+        'inputCol': Parameter(str, 'tokens', 'Input column (%s)' % input_dtype, data_column=True),
         'outputCol': Parameter(str, 'vector', 'Output1 column'),
         'minTF': Parameter(float, 1.0, 'Minimum term frequency'),
         'minDF': Parameter(float, 1.0, 'Minimum document frequency'),
         'vocabSize': Parameter(int, 1 << 18, 'Vocabulary size'),
         'binary': Parameter(bool, False, 'Binary'),
     })
-    input_dtype = 'array<string>'
+
 
     # def _validate_parameters(self):
     #     if not super(OWCountVectorizer, self)._validate_parameters():

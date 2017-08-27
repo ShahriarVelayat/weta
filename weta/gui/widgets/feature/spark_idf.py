@@ -14,14 +14,15 @@ class OWIDF(SparkEstimator, widget.OWWidget):
     icon = "../assets/IDF.svg"
 
     box_text = 'Inverse Document Frequency'
+    input_dtype = 'vector'
 
     learner = feature.IDF
     parameters = OrderedDict({
         'minDocFreq': Parameter(int, 0, 'Minimum document frequency'),
-        'inputCol': Parameter(str, 'tf', 'Input column', data_column=True),
+        'inputCol': Parameter(str, 'tf', 'Input column (%s)' % input_dtype, data_column=True),
         'outputCol': Parameter(str, 'idf', 'Output column'),
     })
-    input_dtype = 'vector'
+
 
     # def _validate_parameters(self):
     #     if not super(OWIDF, self)._validate_parameters():

@@ -14,15 +14,14 @@ class OWOneHotEncoder(SparkTransformer, widget.OWWidget):
     icon = "../assets/OneHotEncoder.svg"
 
     box_text = 'One Hot Encoder'
+    input_dtype = 'array<string>'
 
     learner = feature.OneHotEncoder
     parameters = OrderedDict({
         'dropLast': Parameter(bool, True, 'Drop the last category'),
-        'inputCol': Parameter(str, 'tokens', 'Input column', data_column=True),
+        'inputCol': Parameter(str, 'tokens', 'Input column (%s)' % input_dtype, data_column=True),
         'outputCol': Parameter(str, 'features', 'Output column'),
     })
-
-    input_dtype = 'array<string>'
 
     # def _validate_parameters(self):
     #     if not super(OWOneHotEncoder, self)._validate_parameters():

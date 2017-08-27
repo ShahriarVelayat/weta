@@ -1,4 +1,5 @@
 # Category metadata.
+PRIORITY = 4
 
 # Category icon show in the menu
 ICON = "../assets/weta.svg"
