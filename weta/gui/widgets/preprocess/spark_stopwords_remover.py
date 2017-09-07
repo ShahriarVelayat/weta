@@ -8,7 +8,7 @@ from weta.gui.spark_estimator import SparkTransformer
 
 
 class OWStopWordsRemover(SparkTransformer, widget.OWWidget):
-    priority = 3
+    priority = 4
     name = "Stopwords Remover"
     description = "StopWords Remover"
     icon = "../assets/StopWordsRemover.svg"
@@ -20,23 +20,10 @@ class OWStopWordsRemover(SparkTransformer, widget.OWWidget):
     parameters = OrderedDict({
         'inputCol': Parameter(str, 'text', 'Input column (%s)' % input_dtype, data_column=True),
         'outputCol': Parameter(str, 'tokens', 'Output column'),
-        'stopWords': Parameter(list, None, 'Stopwords list'),
+        # 'stopWords': Parameter(list, None, 'Stopwords list'),
         'caseSensitive': Parameter(bool, False, 'Case sensitive'),
     })
 
-    # def _validate_parameters(self):
-    #     if not super(OWStopWordsRemover, self)._validate_parameters():
-    #         return False
-    #
-    #     df = self.input_data_frame
-    #     input_column = self.inputCol
-    #     output_column = self.outputCol
-    #     types = dict(df.dtypes)
-    #     if types[input_column] != 'array<string>':
-    #         self.error('Input column must be array<string> type')
-    #         return False
-    #     elif output_column in df.columns:
-    #         self.error('Output column must not override an existing one')
-    #         return False
-    #     else:
-    #         return True
+    def _apply(self, params):
+        feature.StopWordsRemover.loadDefaultStopWords('english')  # TODO: default load english stop words
+        super(OWStopWordsRemover, self)._apply(params)

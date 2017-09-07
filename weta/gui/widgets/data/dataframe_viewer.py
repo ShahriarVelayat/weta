@@ -71,7 +71,7 @@ class OWDataFrameViewer(SparkEnvironment, widget.OWWidget):
         self.v_table.setRowCount(0)
         self.v_table.setColumnCount(len(columns))
         self.v_table.setHorizontalHeaderLabels(columns)
-        for i, row in enumerate(df.head(n=1000)):  # show top 1000 rows
+        for i, row in enumerate(df.head(n=100)):  # show top 100 rows
             self.v_table.insertRow(i)
             for j, column in enumerate(df.columns):
                 value = row[column]

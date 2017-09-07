@@ -377,7 +377,7 @@ class OWPySparkScript(SparkEnvironment, widget.OWWidget):
                 'Python files (*.py)\nAll files(*.*)'
         )
 
-        filename = str(filename)
+        filename = str(filename[0])
         if filename:
             name = os.path.basename(filename)
             contents = open(filename, "rb").read().decode("utf-8", errors = "ignore")
@@ -455,11 +455,11 @@ class OWPySparkScript(SparkEnvironment, widget.OWWidget):
 
         if filename:
             fn = ""
-            head, tail = os.path.splitext(filename)
+            head, tail = filename #os.path.splitext(filename)
             if not tail:
                 fn = head + ".py"
             else:
-                fn = filename
+                fn = head
 
             f = open(fn, 'w')
             f.write(self.text.toPlainText())

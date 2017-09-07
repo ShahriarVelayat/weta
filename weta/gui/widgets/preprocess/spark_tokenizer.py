@@ -8,9 +8,9 @@ from weta.gui.spark_estimator import SparkTransformer
 
 
 class OWTokenizer(SparkTransformer, widget.OWWidget):
-    priority = 1
+    priority = 2
     name = "Tokenizer"
-    description = "Tokenizer"
+    description = "Simple Tokenizer (mainly for sentence tokenization)"
     icon = "../assets/Tokenizer.svg"
 
     box_text = 'Tokenizer'

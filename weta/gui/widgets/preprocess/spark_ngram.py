@@ -8,7 +8,7 @@ from weta.gui.spark_estimator import SparkTransformer
 
 
 class OWNGram(SparkTransformer, widget.OWWidget):
-    priority = 2
+    priority = 3
     name = "NGram"
     description = "NGram"
     icon = "../assets/NGram.svg"

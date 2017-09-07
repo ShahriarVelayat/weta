@@ -18,4 +18,3 @@ WIDGET_HELP_PATH = (
 
     ("http://spark.com/my-widget/docs/", "")
 )
-
