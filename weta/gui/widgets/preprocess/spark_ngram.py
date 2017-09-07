@@ -14,7 +14,7 @@ class OWNGram(SparkTransformer, widget.OWWidget):
     icon = "../assets/NGram.svg"
 
     box_text = 'NGram'
-    input_dtype = 'string'
+    input_dtype = 'array<string>'
 
     learner = feature.NGram
     parameters = OrderedDict({
