@@ -25,7 +25,6 @@ class SparkBase(SparkEnvironment):
     resizing_enabled = True
 
     box_text = ''
-    doc = ''
 
     parameters = OrderedDict()
 
@@ -36,20 +35,10 @@ class SparkBase(SparkEnvironment):
         self.v_main_box = gui.widgetBox(self.controlArea, orientation='horizontal', addSpace=True)
 
         self.v_setting_box = gui.widgetBox(self.v_main_box, self.box_text, addSpace=True)
-        self.v_help_box = gui.widgetBox(self.v_main_box, 'Documentation', addSpace=True)
+
 
         self.v_main_box.setMinimumHeight(500)
         self.v_setting_box.setMaximumWidth(250)
-        self.v_help_box.setMinimumWidth(400)
-
-        # Create doc info.
-        self.v_doc_text = QtWidgets.QTextEdit('<pre>' + self.doc + '</pre>', self.v_help_box)
-        self.v_doc_text.setAcceptRichText(True)
-        self.v_doc_text.setReadOnly(True)
-        self.v_doc_text.autoFormatting()
-        self.v_doc_text.setFont(QtGui.QFont('Menlo, Consolas, Courier', 11))
-
-        self.v_help_box.layout().addWidget(self.v_doc_text)
 
         # info area
         self.v_info_box = gui.widgetBox(self.v_setting_box, 'Info:', addSpace=True)

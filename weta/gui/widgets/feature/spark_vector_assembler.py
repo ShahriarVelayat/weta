@@ -14,7 +14,7 @@ class OWVectorAssembler(SparkTransformer, widget.OWWidget):
     priority = 16
     name = "Vector Assembler"
     description = "VectorAssembler"
-    icon = "../assets/Doc2Vec.svg"
+    icon = "../assets/VectorAssembler.svg"
 
     box_text = 'VectorAssembler'
     input_dtype = 'vector'

@@ -21,7 +21,8 @@ ENTRY_POINTS = {
         'Weta Data = weta.gui.widgets.data',
         'Weta Preprocess = weta.gui.widgets.preprocess',
         'Weta Feature = weta.gui.widgets.feature',
-        'Weta Learn = weta.gui.widgets.learn'
+        'Weta Learn = weta.gui.widgets.learn',
+        'Weta Visualisation = weta.gui.widgets.visualise'
     ),
 
     # Register widget help
@@ -61,7 +62,8 @@ if __name__ == '__main__':
                   'weta.gui.widgets.data',
                   'weta.gui.widgets.preprocess',
                   'weta.gui.widgets.feature',
-                  'weta.gui.widgets.learn'],
+                  'weta.gui.widgets.learn',
+                  'weta.gui.widgets.visualise'],
         package_data={
             'weta.gui': ['tutorials/*.ows'],
             'weta.gui.widgets': ['icons/*', 'assets/*'],
@@ -70,8 +72,9 @@ if __name__ == '__main__':
             'Orange3',
             'pandas',
             'py4j',
-            'sqlparse'
-
+            'sqlparse',
+            'pyspark',
+            'plotly'
         ],
         extras_require={
             'pyspark': [],

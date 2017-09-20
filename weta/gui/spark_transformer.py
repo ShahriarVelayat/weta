@@ -1,6 +1,7 @@
 import pyspark.sql
 import pyspark.ml
 from Orange.widgets import widget, gui
+from AnyQt import QtWidgets, QtGui
 from .spark_base import SparkBase
 
 
@@ -27,8 +28,22 @@ class SparkTransformer(SparkBase):
     resizing_enabled = True
 
     def __init__(self):
-        self.doc = self.learner.__doc__ if self.learner is not None else ''
         super(SparkTransformer, self).__init__()
+
+        doc = self.learner.__doc__ if self.learner is not None else ''
+
+        self.v_help_box = gui.widgetBox(self.v_main_box, 'Documentation', addSpace=True)
+        self.v_help_box.setMinimumWidth(400)
+
+        # Create doc info.
+        self.v_doc_text = QtWidgets.QTextEdit('<pre>' + doc + '</pre>', self.v_help_box)
+        self.v_doc_text.setAcceptRichText(True)
+        self.v_doc_text.setReadOnly(True)
+        self.v_doc_text.autoFormatting()
+        self.v_doc_text.setFont(QtGui.QFont('Menlo, Consolas, Courier', 11))
+        self.v_doc_text.setReadOnly(True)
+
+        self.v_help_box.layout().addWidget(self.v_doc_text)
 
     @Inputs.data_frame
     def set_input_data_frame(self, data_frame):

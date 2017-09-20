@@ -10,6 +10,7 @@ class OWDataFrameSplitter(SparkBase, widget.OWWidget):
 
     name = 'Data Splitter'
     description = 'Split a DataFrame into train and test datasets with a fixed ratio'
+    icon = '../assets/DataFrameSplitter.svg'
 
     input_data_frame = None
     class Inputs:

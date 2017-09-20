@@ -1,10 +1,14 @@
-__author__ = "Chao Yang"
-__copyright__ = ""
-__credits__ = ["The Orange Machine Learning Project"]
-__license__ = "Apache License 2.0"
-__maintainer__ = "Chao Yang"
-__email__ = "richd.yang@gmail.com"
+# Category metadata.
+PRIORITY = 4
 
+# Category icon show in the menu
+ICON = "../assets/weta.svg"
+
+# Background color for category background in menu
+# and widget icon background in workflow.
+BACKGROUND = "#D29CE4"
+
+# # Location of widget help files.
 WIDGET_HELP_PATH = (
     # Used for development.
     # You still need to build help pages using
