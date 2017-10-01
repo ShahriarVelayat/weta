@@ -1,8 +1,20 @@
 from pyspark.ml import feature
 from pyspark.ml import classification
 from pyspark.ml import regression
+import ast
+import base64
+import pickle
 
 import weta.core.nltk_tokenizer
+
+def eval_settings(data, format):
+    properties = None
+    if format == 'literal':
+        properties = ast.literal_eval(data)
+    if format == 'pickle':
+        properties = pickle.loads(base64.decodebytes(data.encode('ascii')))
+    return properties
+
 
 def spark_transformer(transformer_cls, inputs, settings):
     input_data_frame = inputs['DataFrame']
