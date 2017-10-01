@@ -3,12 +3,12 @@ import os
 import sys
 import unicodedata
 
-from AnyQt import QtGui, QtWidgets
-from AnyQt.QtCore import Qt, QRegExp, QItemSelectionModel
-from AnyQt.QtGui import (
+from PyQt5 import QtGui, QtWidgets
+from PyQt5.QtCore import Qt, QRegExp, QItemSelectionModel
+from PyQt5.QtGui import (
     QFont, QColor, QPalette, QKeySequence
 )
-from AnyQt.QtWidgets import (
+from PyQt5.QtWidgets import (
     QListView, QSizePolicy, QAction,
     QMenu, QSplitter, QToolButton,
     QFileDialog

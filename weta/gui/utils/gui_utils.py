@@ -1,5 +1,5 @@
 from Orange.widgets import gui
-from AnyQt import QtGui, QtCore, QtWidgets
+from PyQt5 import QtGui, QtCore, QtWidgets
 
 
 class ParameterWidget:

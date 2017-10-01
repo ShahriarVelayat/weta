@@ -1,6 +1,6 @@
 from collections import OrderedDict
 
-from AnyQt import QtWidgets, QtGui
+from PyQt5 import QtWidgets, QtGui
 from Orange.widgets import gui
 from Orange.widgets.settings import Setting
 
@@ -27,6 +27,14 @@ class SparkBase(SparkEnvironment):
     box_text = ''
 
     parameters = OrderedDict()
+
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+
+        # handle parameter settings
+        if getattr(cls, 'parameters') is not None:
+            for name, parameter in cls.parameters.items():
+                setattr(cls, name, Setting(parameter.default_value, name=name, tag=parameter))
 
     def __init__(self):
         super(SparkBase, self).__init__()
@@ -63,13 +71,6 @@ class SparkBase(SparkEnvironment):
         self.v_apply_button = gui.button(self.v_setting_box, self, 'Apply', self.apply)
         self.v_apply_button.setEnabled(False)
 
-    def __init_subclass__(cls, **kwargs):
-        super().__init_subclass__(**kwargs)
-
-        # handle parameter settings
-        if getattr(cls, 'parameters') is not None:
-            for name, parameter in cls.parameters.items():
-                setattr(cls, name, Setting(parameter.default_value, name=name))
 
     def handleNewSignals(self):
         self.apply()

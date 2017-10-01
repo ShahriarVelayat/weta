@@ -13,15 +13,15 @@
 # # from Orange.widgets.visualize.owscatterplotgraph import LegendItem, legend_anchor_pos
 # # from Orange.widgets.io import FileFormats
 #
-# from AnyQt.QtWidgets import (
+# from PyQt5.QtWidgets import (
 # QListView, QSizePolicy, QApplication, QAction,
 #     QGraphicsLineItem, QSlider, QSplitter, QPlainTextEdit, QFileDialog
 # )
-# from AnyQt.QtGui import (
+# from PyQt5.QtGui import (
 #     QKeySequence, QPainterPath
 # )
 #
-# from AnyQt import QtCore
+# from PyQt5 import QtCore
 # from Orange.widgets import widget, gui, settings
 #
 #

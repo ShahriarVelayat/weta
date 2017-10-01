@@ -17,14 +17,14 @@ class OWNaiveBayes(SparkEstimator, widget.OWWidget):
 
     learner = classification.NaiveBayes
     parameters = OrderedDict({
-        'featureCol': Parameter(str, 'feature', 'Feature column', data_column=True),
+        'featuresCol': Parameter(str, 'features', 'Feature column', data_column=True),
         'labelCol': Parameter(str, 'label', 'Label column', data_column=True),
-        'predictionCol': Parameter(str, 'prediction', 'Prediction column'),
-        'probabilityCol': Parameter(str, 'probability', 'Probability column'),
-        'rawPredictionCol': Parameter(str, 'rawPrediction', 'Raw probability column'),
-        'weightCol': Parameter(str, 'weight', 'Weight Column'),
+        # 'predictionCol': Parameter(str, 'prediction', 'Prediction column'),
+        # 'probabilityCol': Parameter(str, 'probability', 'Probability column'),
+        # 'rawPredictionCol': Parameter(str, 'rawPrediction', 'Raw probability column'),
+        # 'weightCol': Parameter(str, 'weight', 'Weight Column'),
 
         'smoothing': Parameter(float, 1.0, 'Smoothing'),
         'modelType': Parameter(str, 'multinomial', 'Model Type'),
-        'thresholds': Parameter(list, None, 'Thresholds'), # list[float]
+        # 'thresholds': Parameter(list, None, 'Thresholds'), # list[float]
     })

@@ -1,6 +1,6 @@
 # import pyspark
-# from AnyQt import QtCore
-# from AnyQt.QtWidgets import (
+# from PyQt5 import QtCore
+# from PyQt5.QtWidgets import (
 #     QSizePolicy, QSplitter, QPlainTextEdit
 # )
 # from Orange.widgets import widget, gui

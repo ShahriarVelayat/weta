@@ -17,12 +17,12 @@ class OWLogisticRegression(SparkEstimator, widget.OWWidget):
 
     learner = classification.LogisticRegression
     parameters = OrderedDict({
-        'featureCol': Parameter(str, 'feature', 'Feature column', data_column=True),
+        'featuresCol': Parameter(str, 'features', 'Features column', data_column=True),
         'labelCol': Parameter(str, 'label', 'Label column', data_column=True),
-        'predictionCol': Parameter(str, 'prediction', 'Prediction column'),
-        'probabilityCol': Parameter(str, "probability", 'Probability column'),
-        'rawPredictionCol': Parameter(str, 'rawPrediction', 'Raw probability column'),
-        'weightCol': Parameter(str, 'weight', 'Weight column'),
+        # 'predictionCol': Parameter(str, 'prediction', 'Prediction column'),
+        # 'probabilityCol': Parameter(str, "probability", 'Probability column'),
+        # 'rawPredictionCol': Parameter(str, 'rawPrediction', 'Raw probability column'),
+        # 'weightCol': Parameter(str, 'weight', 'Weight column'),
 
         'maxIter': Parameter(int, 100, 'Maximum iteration'),
         'regParam': Parameter(float, 0.0, 'Regression Parameter'),
@@ -30,9 +30,8 @@ class OWLogisticRegression(SparkEstimator, widget.OWWidget):
         'tol': Parameter(float, 0.000001, 'tol'),
         'fitIntercept': Parameter(bool, True, 'Fit intercept'),
         'threshold': Parameter(float, 0.5, 'Threshold'),
-        'thresholds': Parameter(list, None, 'Thresholds'),  # list[float]
+        # 'thresholds': Parameter(list, None, 'Thresholds'),  # list[float]
         'standardization': Parameter(bool, True, 'Standardization'),
-        'solver': Parameter(str, 'auto', 'Solver'),
         'aggregationDepth': Parameter(int, 2, 'Aggregation depth'),
         'family': Parameter(str, 'auto', 'Family')
     })

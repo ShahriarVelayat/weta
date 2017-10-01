@@ -1,6 +1,6 @@
 import pyspark
 import pyspark.sql
-from AnyQt import QtCore
+from PyQt5 import QtCore
 from Orange.widgets import widget, gui
 from pyspark.ml.linalg import Vector
 

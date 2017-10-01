@@ -5,7 +5,7 @@ from collections import OrderedDict
 from pyspark.ml import Transformer
 
 
-class SparkGenericTransformation(SparkTransformer, widget.OWWidget):
+class OWGenericTransformation(SparkTransformer, widget.OWWidget):
     name = "Transformation"
     description = "A Generic Transformer of the Spark ml api"
     icon = "../assets/Transformation.svg"
@@ -25,7 +25,7 @@ class SparkGenericTransformation(SparkTransformer, widget.OWWidget):
         self.input_transformer = transformer
 
     def _validate_input(self):
-        if not super(SparkGenericTransformation, self)._validate_input():
+        if not super(OWGenericTransformation, self)._validate_input():
             return False
 
         if self.input_transformer is None:

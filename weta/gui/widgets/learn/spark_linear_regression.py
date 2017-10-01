@@ -17,9 +17,9 @@ class OWLinearRegression(SparkEstimator, widget.OWWidget):
 
     learner = regression.LinearRegression
     parameters = OrderedDict({
-        'featureCol': Parameter(str, 'feature', 'Feature column', data_column=True),
+        'featuresCol': Parameter(str, 'features', 'Feature column', data_column=True),
         'labelCol': Parameter(str, 'label', 'Label column', data_column=True),
-        'weightCol': Parameter(str, 'weight', 'Weight Column'),
+        # 'weightCol': Parameter(str, 'weight', 'Weight Column'),
 
         'maxIter': Parameter(int, 100, 'Maximal iteration'),
         'regParam': Parameter(float, 0.0, 'Regression Parameter'),

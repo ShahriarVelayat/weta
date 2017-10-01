@@ -3,7 +3,7 @@
 # import pyspark
 # from Orange.widgets import widget, gui, settings
 # from Orange.widgets.settings import Setting
-# from AnyQt import QtGui
+# from PyQt5 import QtGui
 #
 # from weta.gui.utils.gui_utils import ParameterWidget
 # from weta.gui.utils.spark_api_utils import get_dataframe_function_info

@@ -2,7 +2,6 @@ from Orange.widgets import widget
 from pyspark.ml import Model
 
 from .spark_transformer import SparkTransformer
-import copy
 
 
 class SparkEstimator(SparkTransformer):
@@ -21,4 +20,3 @@ class SparkEstimator(SparkTransformer):
 
         self.Outputs.data_frame.send(self.output_data_frame)
         self.Outputs.transformer.send(self.output_transformer)
-

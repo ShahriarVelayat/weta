@@ -1,6 +1,6 @@
-from AnyQt.QtWebEngineWidgets import QWebEngineView
-from AnyQt.QtWidgets import QApplication
-from AnyQt.QtCore import QUrl
+from PyQt5.QtWebEngineWidgets import QWebEngineView
+from PyQt5.QtWidgets import QApplication
+from PyQt5.QtCore import QUrl
 import plotly
 import plotly.graph_objs as go
 import tempfile

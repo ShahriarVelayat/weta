@@ -1,7 +1,7 @@
 from collections import OrderedDict
 
 import pyspark.sql
-from AnyQt import QtWidgets, QtCore
+from PyQt5 import QtWidgets, QtCore
 from Orange.widgets import widget, gui, settings
 
 from weta.gui.spark_environment import SparkEnvironment

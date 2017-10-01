@@ -6,7 +6,7 @@ from weta.gui.spark_base import Parameter
 from weta.gui.spark_transformer import SparkTransformer
 
 
-class SparkModelTransformation(SparkTransformer, widget.OWWidget):
+class OWModelTransformation(SparkTransformer, widget.OWWidget):
     name = "Model Transformation"
     description = "A Model Transformer of the Spark ml api"
     icon = "../assets/ModelTransformation.svg"
@@ -29,7 +29,7 @@ class SparkModelTransformation(SparkTransformer, widget.OWWidget):
         self.input_transformer = transformer
 
     def _validate_input(self):
-        if not super(SparkModelTransformation, self)._validate_input():
+        if not super(OWModelTransformation, self)._validate_input():
             return False
 
         if self.input_transformer is None:

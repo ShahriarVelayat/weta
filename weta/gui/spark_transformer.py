@@ -1,7 +1,7 @@
 import pyspark.sql
 import pyspark.ml
 from Orange.widgets import widget, gui
-from AnyQt import QtWidgets, QtGui
+from PyQt5 import QtWidgets, QtGui
 from .spark_base import SparkBase
 
 
@@ -85,12 +85,12 @@ class SparkTransformer(SparkBase):
 
         df = self.input_data_frame
         types = dict(df.dtypes)
-        if getattr(self, 'inputCol') is not None:
+        if hasattr(self, 'inputCol'):
             input_column = self.inputCol
             if types[input_column] != self.input_dtype:
                 self.error('Input column must be %s type' % self.input_dtype)
                 return False
-        if getattr(self, 'outputCol') is not None:
+        if hasattr(self, 'outputCol'):
             output_column = self.outputCol
             if output_column in df.columns:
                 self.error('Output column must not override an existing one')
