@@ -7,13 +7,7 @@ import pickle
 
 import weta.core.nltk_tokenizer
 
-def eval_settings(data, format):
-    properties = None
-    if format == 'literal':
-        properties = ast.literal_eval(data)
-    if format == 'pickle':
-        properties = pickle.loads(base64.decodebytes(data.encode('ascii')))
-    return properties
+global sqlContext
 
 
 def spark_transformer(transformer_cls, inputs, settings):
@@ -88,4 +82,8 @@ def dataframe_reader(inputs, settings):
         .options(header='true', inferschema='true') \
         .load(settings['setting_file_path'])
 
+    return {'DataFrame': df}
+
+def dataframe_viewer(inputs, settings):
+    df = inputs['DataFrame']
     return {'DataFrame': df}

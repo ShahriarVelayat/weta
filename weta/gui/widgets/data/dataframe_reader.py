@@ -36,29 +36,28 @@ class OWDataFrameReader(SparkEnvironment, widget.OWWidget):
     OPTIONS_LIST = [
         Parameter('header', 'true', 'Include Header?', 'str')
     ]
-    setting_format = settings.Setting('com.databricks.spark.csv')
-    setting_file_path = settings.Setting('')
-    setting_parameters = settings.Setting(OrderedDict())
+    format = settings.Setting('com.databricks.spark.csv')
+    file_path = settings.Setting('')
 
     want_main_area = False
 
     def __init__(self):
         super().__init__()
         self.controlArea.setMinimumWidth(400)
-        gui.comboBox(self.controlArea, self, 'setting_format', items=OWDataFrameReader.FORMAT_LIST, label='File format')
+        gui.comboBox(self.controlArea, self, 'format', items=OWDataFrameReader.FORMAT_LIST, label='File format')
         file_browser_box = gui.hBox(self.controlArea, 'File path')
-        gui.lineEdit(file_browser_box, self, 'setting_file_path', orientation=QtCore.Qt.Horizontal)
+        gui.lineEdit(file_browser_box, self, 'file_path', orientation=QtCore.Qt.Horizontal)
         gui.toolButton(file_browser_box, self, 'Browse...', callback=self.browse_file)
         gui.button(self.controlArea, self, 'Apply', callback=self.apply)
 
     def browse_file(self):
         file = QtWidgets.QFileDialog.getOpenFileName()[0]
         if file:
-            self.controls.setting_file_path.setText(file)
+            self.controls.file_path.setText(file)
 
     def apply(self):
-        df = self.sqlContext.read.format(self.setting_format) \
+        df = self.sqlContext.read.format(self.format) \
             .options(header='true', inferschema='true') \
-            .load(self.setting_file_path)
+            .load(self.file_path)
         self.Outputs.data_frame.send(df)
         self.hide()
