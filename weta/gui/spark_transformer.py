@@ -8,17 +8,14 @@ from .spark_base import SparkBase
 class SparkTransformer(SparkBase):
 
     # -----------Inputs / Outputs ---------------------
-    input_data_frame = None
+    DataFrame = None
 
     class Inputs:
-        data_frame = widget.Input("DataFrame", pyspark.sql.DataFrame)
-
-    output_data_frame = None
-    output_transformer = None
+        DataFrame = widget.Input("DataFrame", pyspark.sql.DataFrame)
 
     class Outputs:
-        data_frame = widget.Output("DataFrame", pyspark.sql.DataFrame)
-        transformer = widget.Output("Transformer", pyspark.ml.Transformer)
+        DataFrame = widget.Output("DataFrame", pyspark.sql.DataFrame)
+        Transformer = widget.Output("Transformer", pyspark.ml.Transformer)
 
     learner = None  # type: type
     input_dtype = None
@@ -45,15 +42,15 @@ class SparkTransformer(SparkBase):
 
         self.v_help_box.layout().addWidget(self.v_doc_text)
 
-    @Inputs.data_frame
+    @Inputs.DataFrame
     def set_input_data_frame(self, data_frame):
-        self.input_data_frame = data_frame
+        self.DataFrame = data_frame
 
     def _validate_input(self):
         if not super(SparkTransformer, self)._validate_input():
             return False
 
-        if self.input_data_frame is None:
+        if self.DataFrame is None:
             self.output_data_frame = None
             self.v_apply_button.setEnabled(False)
             self.error('Input data frame does not exist')
@@ -66,7 +63,7 @@ class SparkTransformer(SparkBase):
             self.v_apply_button.setEnabled(True)
             # update data column combobox
             # types = dict(self.input_data_frame.dtypes)
-            columns = self.input_data_frame.columns
+            columns = self.DataFrame.columns
             for name, parameter in self.parameters.items():
                 if parameter.data_column:
                     saved_value = getattr(self, name)
@@ -83,7 +80,7 @@ class SparkTransformer(SparkBase):
         if not super(SparkTransformer, self)._validate_parameters():
             return False
 
-        df = self.input_data_frame
+        df = self.DataFrame
         types = dict(df.dtypes)
         if hasattr(self, 'inputCol'):
             input_column = self.inputCol
@@ -102,9 +99,9 @@ class SparkTransformer(SparkBase):
         transformer = self.learner()
         transformer.setParams(**params)
 
-        self.output_transformer = transformer
-        self.output_transformer.input_dtype = self.input_dtype  # attach a required input dtype
-        self.output_data_frame = transformer.transform(self.input_data_frame)
+        output_transformer = transformer
+        output_transformer.input_dtype = self.input_dtype  # attach a required input dtype
+        output_data_frame = transformer.transform(self.DataFrame)
 
-        self.Outputs.data_frame.send(self.output_data_frame)
-        self.Outputs.transformer.send(self.output_transformer)
+        self.Outputs.DataFrame.send(output_data_frame)
+        self.Outputs.Transformer.send(output_transformer)

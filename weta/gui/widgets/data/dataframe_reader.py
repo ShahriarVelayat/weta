@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from pyspark.sql.functions import monotonically_increasing_id
 
 import pyspark.sql
 from PyQt5 import QtWidgets, QtCore
@@ -30,7 +31,8 @@ class OWDataFrameReader(SparkEnvironment, widget.OWWidget):
         data_frame = widget.Output('DataFrame', pyspark.sql.DataFrame)
 
     FORMAT_LIST = tuple([
-        ('CSV', 'com.databricks.spark.csv'),
+        ('JSON', 'json'),
+        ('CSV', 'csv'),
         ('LibSVM', 'libsvm'),
     ])
     OPTIONS_LIST = [
@@ -56,8 +58,12 @@ class OWDataFrameReader(SparkEnvironment, widget.OWWidget):
             self.controls.file_path.setText(file)
 
     def apply(self):
-        df = self.sqlContext.read.format(self.format) \
+        df = self.sqlContext.read.format(OWDataFrameReader.FORMAT_LIST[self.format][1]) \
             .options(header='true', inferschema='true') \
             .load(self.file_path)
+
+        # add a id column
+        df = df.withColumn("_id", monotonically_increasing_id())
+
         self.Outputs.data_frame.send(df)
         self.hide()

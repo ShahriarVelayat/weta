@@ -76,7 +76,7 @@ class OWDataFrameViewer(SparkEnvironment, widget.OWWidget):
             for j, column in enumerate(df.columns):
                 value = row[column]
                 if isinstance(value, Vector):
-                    value = str(list(value.toArray())) # to dense array
+                    value = str(list(value.toArray()[:10])) + '...' # to dense array
                 else:
                     value = str(value)
                 gui.tableItem(self.v_table, i, j, value)
