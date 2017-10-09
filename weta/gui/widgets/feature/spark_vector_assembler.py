@@ -16,11 +16,8 @@ class OWVectorAssembler(SparkTransformer, widget.OWWidget):
     description = "VectorAssembler"
     icon = "../assets/VectorAssembler.svg"
 
-    box_text = 'VectorAssembler'
-    input_dtype = 'vector'
-
     learner = feature.VectorAssembler
-    parameters = OrderedDict({
-        'inputCols': Parameter(str, 'vectors', 'Input columns (%s)' % input_dtype, data_column=True),
-        'outputCol': Parameter(str, 'assembled_vector', 'Output1 column'),
-    })
+
+    class Parameters:
+        inputCols = Parameter(str, 'vectors', 'Input columns', input_column=True, input_dtype=Parameter.VECTOR)
+        outputCol = Parameter(str, 'assembled_vector', 'Output1 column', output_column=True)

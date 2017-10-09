@@ -48,6 +48,7 @@ def spark_regex_tokenizer(inputs, settings):
 
 
 def spark_stopwords_remover(inputs, settings):
+    feature.StopWordsRemover.loadDefaultStopWords('english')
     return spark_transformer(feature.StopWordsRemover, inputs, settings)
 
 

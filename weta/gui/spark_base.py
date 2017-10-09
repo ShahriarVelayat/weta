@@ -1,27 +1,32 @@
-import importlib
+import concurrent.futures
 import logging
-from collections import OrderedDict
 from functools import partial
 
 from Orange.widgets import widget, gui
 from Orange.widgets.settings import Setting
-import concurrent.futures
 from Orange.widgets.utils.concurrent import (
-    ThreadExecutor, FutureWatcher, methodinvoke
+    ThreadExecutor, FutureWatcher
 )
 from PyQt5.QtCore import QThread, pyqtSlot
-
-from weta.gui.spark_environment import SparkEnvironment
 from weta.core import weta_lib
+from weta.gui.spark_environment import SparkEnvironment
+
 
 class Parameter:
-    def __init__(self, type, default_value, label, description='', items=None, data_column=False):
+
+    STRING = 'string'
+    ARRAY_STRING = 'array<string>'
+    VECTOR = 'vector'
+
+    def __init__(self, type, default_value, label, description='', items=None, input_column=False, output_column=False, input_dtype=None):
         self.type = type
         self.default_value = default_value
         self.label = label
         self.description = description
         self.items = items
-        self.data_column = data_column
+        self.input_column = input_column
+        self.input_dtype = input_dtype
+        self.output_column = output_column
 
 
 class SparkBase(SparkEnvironment):
@@ -34,24 +39,29 @@ class SparkBase(SparkEnvironment):
 
     box_text = ''
 
-    parameters = OrderedDict()
+    class Inputs:
+        pass
+
+    class Outpus:
+        pass
+
+    class Parameters:
+        pass
 
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
 
         # handle parameter settings
-        if getattr(cls, 'parameters') is not None:
-            for name, parameter in cls.parameters.items():
-                setattr(cls, name, Setting(parameter.default_value, name=name, tag=parameter))
+
+        for name, parameter in cls.get_class_variables(cls, 'Parameters', Parameter).items():
+            setattr(cls, name, Setting(parameter.default_value, name=name, tag=parameter))
 
     def __init__(self):
         super(SparkBase, self).__init__()
 
         # Create parameters Box.
         self.v_main_box = gui.widgetBox(self.controlArea, orientation='horizontal', addSpace=True)
-
-        self.v_setting_box = gui.widgetBox(self.v_main_box, self.box_text, addSpace=True)
-
+        self.v_setting_box = gui.widgetBox(self.v_main_box, self.box_text if self.box_text != '' else self.name, addSpace=True)
 
         self.v_main_box.setMinimumHeight(500)
         self.v_setting_box.setMaximumWidth(250)
@@ -62,19 +72,7 @@ class SparkBase(SparkEnvironment):
         # setting area
         self.v_parameters_box = gui.widgetBox(self.v_setting_box, 'Parameters:', addSpace=True)
 
-        for name, parameter in self.parameters.items():
-            if parameter.items is not None:
-                gui.comboBox(self.v_parameters_box, self, name, label=parameter.label, labelWidth=300,
-                             valueType=parameter.type, items=parameter.items)
-            elif parameter.type == bool:
-                gui.checkBox(self.v_parameters_box, self, name, label=parameter.label, labelWidth=300)
-            elif parameter.data_column:
-                items = tuple([parameter.default_value])
-                gui.comboBox(self.v_parameters_box, self, name, label=parameter.label, labelWidth=300,
-                             valueType=parameter.type, items=items, editable=True, sendSelectedValue=True)
-            else:
-                gui.lineEdit(self.v_parameters_box, self, name, parameter.label, labelWidth=300,
-                             valueType=parameter.type)
+        self.initParametersUI()
 
         self.v_apply_button = gui.button(self.v_setting_box, self, 'Apply', self.apply)
         self.v_apply_button.setEnabled(False)
@@ -84,6 +82,21 @@ class SparkBase(SparkEnvironment):
         #: An executor we use to submit learner evaluations into a thread pool
         self._executor = ThreadExecutor()
 
+    def initParametersUI(self):
+
+        for name, parameter in self.get_class_variables(self, 'Parameters', Parameter).items():
+            if parameter.items is not None:
+                gui.comboBox(self.v_parameters_box, self, name, label=parameter.label, labelWidth=300,
+                             valueType=parameter.type, items=parameter.items)
+            elif parameter.type == bool:
+                gui.checkBox(self.v_parameters_box, self, name, label=parameter.label, labelWidth=300)
+            elif parameter.input_column:
+                items = tuple([parameter.default_value])
+                gui.comboBox(self.v_parameters_box, self, name, label=parameter.label, labelWidth=300,
+                             valueType=parameter.type, items=items, editable=True, sendSelectedValue=True)
+            else:
+                gui.lineEdit(self.v_parameters_box, self, name, parameter.label, labelWidth=300,
+                             valueType=parameter.type)
 
     def handleNewSignals(self):
         self.apply()
@@ -93,6 +106,14 @@ class SparkBase(SparkEnvironment):
 
     def _validate_parameters(self):
         return True
+
+    @staticmethod
+    def get_class_variables(obj, cls_name, type):
+        if not hasattr(obj, cls_name):
+            return {}
+        else:
+            cls = getattr(obj, cls_name)
+            return {name: getattr(cls, name) for name in dir(cls) if isinstance(getattr(cls, name), type)}
 
     def apply(self):
         if self._task is not None:
@@ -108,19 +129,15 @@ class SparkBase(SparkEnvironment):
         self.hide()
 
         # collect params
-        params = {name: getattr(self, name) for name, parameter in self.parameters.items()}
+        params = {name: getattr(self, name) for name, parameter in self.get_class_variables(self, 'Parameters', Parameter).items()}
         # self._apply(params)
 
         # collect inputs
         inputs = {}
-        if hasattr(self, 'Inputs'):
-            for input in dir(self.Inputs):
-                input_var = getattr(self.Inputs, input)
-                if isinstance(input_var, widget.Input):
-                    input_name = input_var.name
-                    if hasattr(self, input_name):
-                        input_value = getattr(self, input_name)
-                        inputs[input_name] = input_value
+        for input_name, input_var in self.get_class_variables(self, 'Inputs', widget.Input):
+            assert input_name == input_var.name
+            input_value = getattr(self, input_name) if hasattr(self, input_name) else None
+            inputs[input_name] = input_value
 
         func = getattr(weta_lib, self.__module__.split('.')[-1])
 
@@ -151,9 +168,6 @@ class SparkBase(SparkEnvironment):
         task.watcher.done.connect(self._task_finished)
 
 
-    def _apply(self, params):
-        pass
-
     @pyqtSlot(concurrent.futures.Future)
     def _task_finished(self, f):
         """
@@ -175,14 +189,11 @@ class SparkBase(SparkEnvironment):
             assert isinstance(results, dict)
             # collect outputs
             outputs = {}
-            if hasattr(self, 'Outputs'):
-                for output in dir(self.Outputs):
-                    output_var = getattr(self.Outputs, output)
-                    if isinstance(output_var, widget.Output):
-                        output_name = output_var.name
-                        outputs[output_name] = output_var
-            for output, value in results.items():
-                outputs[output].send(value)
+            for output_name, output_var in self.get_class_variables(self, 'Outputs', widget.Output).items():
+                assert output_name == output_var.name
+                outputs[output_name] = output_var
+            for output_name, output_value in results.items():
+                outputs[output_name].send(output_value)
 
         except Exception as ex:
             # Log the exception with a traceback
@@ -213,10 +224,10 @@ class Task:
     """
     #: A concurrent.futures.Future with our (eventual) results.
     #: The OWLearningCurveC class must fill this field
-    future = ...       # type: concurrent.futures.Future
+    future = ...  # type: concurrent.futures.Future
 
     #: FutureWatcher. Likewise this will be filled by OWLearningCurveC
-    watcher = ...      # type: FutureWatcher
+    watcher = ...  # type: FutureWatcher
 
     #: True if this evaluation has been cancelled. The OWLearningCurveC
     #: will setup the task execution environment in such a way that this
@@ -239,3 +250,4 @@ class Task:
         self.future.cancel()
         # ... and wait until computation finishes
         concurrent.futures.wait([self.future])
+

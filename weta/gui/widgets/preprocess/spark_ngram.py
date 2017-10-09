@@ -13,12 +13,9 @@ class OWNGram(SparkTransformer, widget.OWWidget):
     description = "NGram"
     icon = "../assets/NGram.svg"
 
-    box_text = 'NGram'
-    input_dtype = 'array<string>'
-
     learner = feature.NGram
-    parameters = OrderedDict({
-        'n': Parameter(int, 2, 'N'),
-        'inputCol': Parameter(str, 'text', 'Input column (%s)' % input_dtype, data_column=True),
-        'outputCol': Parameter(str, 'tokens', 'Output column'),
-    })
+
+    class Parameters:
+        n = Parameter(int, 2, 'N')
+        inputCol = Parameter(str, 'text', 'Input column', input_column=True, input_dtype=Parameter.ARRAY_STRING)
+        outputCol = Parameter(str, 'tokens', 'Output column', output_column=True)

@@ -12,19 +12,17 @@ class OWNaiveBayes(SparkEstimator, widget.OWWidget):
     name = "NaiveBayes"
     description = "NaiveBayes Algorithm"
     icon = "../assets/LinearRegression.svg"
-
-    box_text = "Linear Regression"
-
+    
     learner = classification.NaiveBayes
-    parameters = OrderedDict({
-        'featuresCol': Parameter(str, 'features', 'Feature column', data_column=True),
-        'labelCol': Parameter(str, 'label', 'Label column', data_column=True),
-        # 'predictionCol': Parameter(str, 'prediction', 'Prediction column'),
-        # 'probabilityCol': Parameter(str, 'probability', 'Probability column'),
-        # 'rawPredictionCol': Parameter(str, 'rawPrediction', 'Raw probability column'),
-        # 'weightCol': Parameter(str, 'weight', 'Weight Column'),
+    
+    class Parameters:
+        featuresCol =  Parameter(str, 'features', 'Feature column', input_column=True)
+        labelCol =  Parameter(str, 'label', 'Label column', input_column=True)
+        # predictionCol =  Parameter(str, 'prediction', 'Prediction column')
+        # probabilityCol =  Parameter(str, 'probability', 'Probability column')
+        # rawPredictionCol =  Parameter(str, 'rawPrediction', 'Raw probability column')
+        # weightCol =  Parameter(str, 'weight', 'Weight Column')
 
-        'smoothing': Parameter(float, 1.0, 'Smoothing'),
-        'modelType': Parameter(str, 'multinomial', 'Model Type'),
-        # 'thresholds': Parameter(list, None, 'Thresholds'), # list[float]
-    })
+        smoothing =  Parameter(float, 1.0, 'Smoothing')
+        modelType =  Parameter(str, 'multinomial', 'Model Type')
+        # 'thresholds =  Parameter(list, None, 'Thresholds') # list[float]

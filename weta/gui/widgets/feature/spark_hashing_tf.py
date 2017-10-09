@@ -14,12 +14,11 @@ class OWHashingTF(SparkTransformer, widget.OWWidget):
     icon = "../assets/CountVectorizer.svg"
 
     box_text = 'Hashing TF'
-    input_dtype = 'array<string>'
 
     learner = feature.HashingTF
-    parameters = OrderedDict({
-        'inputCol': Parameter(str, 'tokens', 'Input column (%s)' % input_dtype, data_column=True),
-        'outputCol': Parameter(str, 'vector', 'Output column'),
-        'numFeatures': Parameter(int, 1 << 18, 'Number of features'),
-        'binary': Parameter(bool, False, 'Binary'),
-    })
+
+    class Parameters:
+        inputCol = Parameter(str, 'tokens', 'Input column', input_column=True, input_dtype=Parameter.ARRAY_STRING)
+        outputCol = Parameter(str, 'vector', 'Output column', output_column=True)
+        numFeatures = Parameter(int, 1 << 18, 'Number of features')
+        binary = Parameter(bool, False, 'Binary')

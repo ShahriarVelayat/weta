@@ -13,15 +13,12 @@ class OWLinkageVectorizer(SparkEstimator, widget.OWWidget):
     description = "Linkage Vectorizer"
     icon = "../assets/LinkageVectorizer.svg"
 
-    box_text = 'Linkage Vectorizer'
-    input_dtype = 'array<string>'
-
     learner = feature.CountVectorizer
-    parameters = OrderedDict({
-        # 'inputCol': Parameter(str, 'tokens', 'Input column (%s)' % input_dtype, data_column=True),
-        # 'outputCol': Parameter(str, 'vector', 'Output1 column'),
-        # 'minTF': Parameter(float, 1.0, 'Minimum term frequency'),
-        # 'minDF': Parameter(float, 1.0, 'Minimum document frequency'),
-        # 'vocabSize': Parameter(int, 1 << 18, 'Vocabulary size'),
-        # 'binary': Parameter(bool, False, 'Binary'),
-    })
+
+    class Parameters:
+        inputCol = Parameter(str, 'tokens', 'Input column', input_column=True, input_dtype=Parameter.ARRAY_STRING)
+        # outputCol = Parameter(str, 'vector', 'Output1 column', output_column=True)
+        # minTF =  Parameter(float, 1.0, 'Minimum term frequency')
+        # minDF =  Parameter(float, 1.0, 'Minimum document frequency')
+        # vocabSize =  Parameter(int, 1 << 18, 'Vocabulary size')
+        # binary =  Parameter(bool, False, 'Binary')

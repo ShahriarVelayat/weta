@@ -22,7 +22,7 @@ class OWDataFrameJoiner(SparkBase, widget.OWWidget):
         DataFrame = widget.Output('DataFrame', DataFrame)
 
     parameters = OrderedDict({
-        'id': Parameter(str, '_id', 'ID column to join on', data_column=True),
+        'id': Parameter(str, '_id', 'ID column to join on', input_column=True),
         # 'test_weight': Parameter(float, 0.1, 'Test weight of split ratio'),
     })
 
