@@ -30,15 +30,15 @@ class OWDataFrameReader(SparkEnvironment, widget.OWWidget):
     class Outputs:
         data_frame = widget.Output('DataFrame', pyspark.sql.DataFrame)
 
-    FORMAT_LIST = tuple([
-        ('JSON', 'json'),
-        ('CSV', 'csv'),
-        ('LibSVM', 'libsvm'),
-    ])
+    FORMAT_LIST = [
+        'json',
+        'csv',
+        'libsvm',
+    ]
     OPTIONS_LIST = [
         Parameter('header', 'true', 'Include Header?', 'str')
     ]
-    format = settings.Setting('com.databricks.spark.csv')
+    format = settings.Setting('csv')
     file_path = settings.Setting('')
 
     want_main_area = False
@@ -46,7 +46,7 @@ class OWDataFrameReader(SparkEnvironment, widget.OWWidget):
     def __init__(self):
         super().__init__()
         self.controlArea.setMinimumWidth(400)
-        gui.comboBox(self.controlArea, self, 'format', items=OWDataFrameReader.FORMAT_LIST, label='File format')
+        gui.comboBox(self.controlArea, self, 'format', items=OWDataFrameReader.FORMAT_LIST, label='File format', sendSelectedValue=True)
         file_browser_box = gui.hBox(self.controlArea, 'File path')
         gui.lineEdit(file_browser_box, self, 'file_path', orientation=QtCore.Qt.Horizontal)
         gui.toolButton(file_browser_box, self, 'Browse...', callback=self.browse_file)
@@ -58,7 +58,8 @@ class OWDataFrameReader(SparkEnvironment, widget.OWWidget):
             self.controls.file_path.setText(file)
 
     def apply(self):
-        df = self.sqlContext.read.format(OWDataFrameReader.FORMAT_LIST[self.format][1]) \
+        # OWDataFrameReader.FORMAT_LIST[self.format][1]) \
+        df = self.sqlContext.read.format(self.format) \
             .options(header='true', inferschema='true') \
             .load(self.file_path)
 

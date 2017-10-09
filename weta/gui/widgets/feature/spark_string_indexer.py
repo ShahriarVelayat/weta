@@ -16,5 +16,5 @@ class OWStringIndexer(SparkEstimator, widget.OWWidget):
     learner = feature.StringIndexer
 
     class Parameters:
-        inputCol = Parameter(str, 'category', 'Input column', input_column=True, input_dtype=Parameter.STRING)
+        inputCol = Parameter(str, 'category', 'Input column', input_column=True, input_dtype=Parameter.T_STRING)
         outputCol = Parameter(str, 'category_index', 'Output column', output_column=True)

@@ -44,8 +44,10 @@ class Exporter:
             if len(node['inputs'].keys()) == 0:
                 roots.append(node)
 
-        code = ''
-        code += 'from weta.core.weta_lib import * \n\n'
+        code = []
+        code.append('from weta.core.weta_lib import * \n')
+        # start from roots, generate code
+        generated_nodes = set()
 
         # for defined scripts, generate them firstly
         for node in self.nodes.values():
@@ -53,19 +55,27 @@ class Exporter:
             if func_name == 'pyspark_script_console':
                 func_name = func_name + node['id']
                 script = node['settings']['_script'].replace('\n', '  \n', -1)
-                code += 'def %s(inputs, settings): \n' % func_name
-                code += "    in_object = inputs['in_object'] \n"
-                code += "    out_object = None \n"
-                code += re.sub( '^',' '*4, script ,flags=re.MULTILINE )
-                code += "    return out_object \n"
+                code.append('def %s(inputs, settings):' % func_name)
+                code.append("    data = inputs.get('data', None)")
+                code.append("    df = inputs.get('df', None)")
+                code.append("    df1 = inputs.get('df1', None)")
+                code.append("    df2 = inputs.get('df2', None)")
+                code.append("    df3 = inputs.get('df3', None)")
+                code.append("    transformer = inputs.get('transformer', None)")
+                code.append("    estimator = inputs.get('estimator', None)")
+                code.append("    model = inputs.get('model', None) \n")
+                code.append(re.sub( '^',' '*4, script ,flags=re.MULTILINE ))
+                code.append("")
+                code.append("    return {'data': data, 'df': df, 'df1': df1, 'df2': df2, 'df3': df3, 'transformer': transformer, 'estimator': estimator, 'model': model} \n")
 
-        # start from roots, generate code
         for root in roots:
             stack = [root]
-            generated_nodes = set()
 
             while len(stack) > 0:
                 node = stack.pop()
+
+                if node['id'] in generated_nodes:
+                    continue
 
                 unsatisfied_input = False
                 for input in node['inputs'].keys():
@@ -80,24 +90,24 @@ class Exporter:
                     continue
 
                 # start generating
-                code += '\n\n# %s \n' % node['title']
+                code.append('\n# %s' % node['title'])
 
                 input_entries = []
                 for input in node['inputs'].keys():
                     input_node_id = node['inputs'][input]['node_id']
                     input_node_channel = node['inputs'][input]['channel']
                     input_entries.append("'%s': outputs%s['%s']" % (input, input_node_id, input_node_channel) )
-                code += 'inputs%s = {%s} \n' % (node['id'], ", ".join(input_entries))
+                code.append('inputs%s = {%s}' % (node['id'], ", ".join(input_entries)))
                 qualified_name: str = node['qualified_name']
                 func_name = qualified_name.split('.')[-2]
 
                 if func_name == 'pyspark_script_console':
                     func_name = func_name + node['id']
-                    code += 'settings%s = {} \n' % node['id']
+                    code.append('settings%s = {}' % node['id'])
                 else:
-                    code += 'settings%s = %s \n' % (node['id'], node['settings'])
+                    code.append('settings%s = %s' % (node['id'], node['settings']))
 
-                code += 'outputs%s = %s(inputs%s, settings%s) \n' % (node['id'], func_name, node['id'], node['id'])
+                code.append('outputs%s = %s(inputs%s, settings%s)' % (node['id'], func_name, node['id'], node['id']))
 
                 generated_nodes.add(node['id'])
 
@@ -107,7 +117,7 @@ class Exporter:
                         output_node_id = output_node['node_id']
                         stack.append(self.nodes[output_node_id])
 
-            print(code)
+        print('\n'.join(code))
 
 
 
@@ -123,8 +133,10 @@ class Exporter:
         if format == 'pickle':
             properties = pickle.loads(base64.decodebytes(data.encode('ascii')))
 
-        properties.pop('savedWidgetGeometry')
-        properties.pop('__version__')
+        excludes = ['savedWidgetGeometry', '__version__']
+        for prop in excludes:
+            if prop in properties:
+                properties.pop(prop)
 
         return {'node_id': node_id, 'settings': properties, 'settings_format': format}
 

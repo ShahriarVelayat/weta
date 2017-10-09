@@ -26,7 +26,7 @@ class EmbedIPython(RichJupyterWidget):
         self.kernel_manager = QtInProcessKernelManager()
         self.kernel_manager.start_kernel()
         self.kernel = self.kernel_manager.kernel
-        # self.kernel.gui = 'qt4'
+        self.kernel.gui = 'qt4'
         self.kernel.shell.push(kwarg)
         self.kernel_client = self.kernel_manager.client()
         self.kernel_client.start_channels()
@@ -164,7 +164,7 @@ class Script(object):
         self.filename = filename
 
 
-class ScriptItemDelegate(QtWidgets.QStyledItemDelegate):
+class ScriptItemDelegate(QtGui.QStyledItemDelegate):
     def __init__(self, parent):
         super().__init__(parent)
 
@@ -205,38 +205,100 @@ def select_row(view, row):
 
 from weta.gui.spark_environment import SparkEnvironment
 
-
+import pyspark
+import pyspark.ml
 class OWPySparkScript(SparkEnvironment, widget.OWWidget):
     priority = 3
     name = "PySpark Script"
     description = "Write a PySpark script and run it on input"
     icon = "../icons/PythonScript.svg"
 
-    inputs = [("in_object", object, "setObject")]
-    outputs = [("out_object", object, widget.Dynamic)]
+    class Inputs:
+        df = widget.Input('df', pyspark.sql.DataFrame, default=True)
+        df1 = widget.Input('df1', pyspark.sql.DataFrame)
+        df2 = widget.Input('df2', pyspark.sql.DataFrame)
+        df3 = widget.Input('df3', pyspark.sql.DataFrame)
 
-    in_object = None
-    out_object = None
-    auto_execute = Setting(False)
+        transformer = widget.Input('transformer', pyspark.ml.Transformer)
+        estimator = widget.Input('transformer', pyspark.ml.Estimator)
+        model = widget.Input('model', pyspark.ml.Model)
 
-    libraryListSource = \
-        Setting([Script("Hello world", "print('Hello world')\n")])
+        data = widget.Input('data', object)
+
+    class Outputs:
+        df = widget.Output('df', pyspark.sql.DataFrame, default=True)
+        df1 = widget.Output('df1', pyspark.sql.DataFrame)
+        df2 = widget.Output('df2', pyspark.sql.DataFrame)
+        df3 = widget.Output('df3', pyspark.sql.DataFrame)
+
+        transformer = widget.Output('transformer', pyspark.ml.Transformer)
+        estimator = widget.Output('transformer', pyspark.ml.Estimator)
+        model = widget.Output('model', pyspark.ml.Model)
+
+        data = widget.Output('data', object)
+
+    # inputs = [("in_object", object, "setObject")]
+    # outputs = [("out_object", object, widget.Dynamic)]
+
+    df = None
+    df1 = None
+    df2 = None
+    df3 = None
+    transformer = None
+    estimator = None
+    model = None
+    data = None
+
+    libraryListSource = Setting([Script("Hello world", "print('Hello world')\n")])
     currentScriptIndex = Setting(0)
     splitterState = Setting(None)
     auto_execute = Setting(False)
     _script = Setting("")
 
+    @Inputs.data
+    def set_data(self, obj):
+        self.data = obj
+        self.console.kernel.shell.push({'data': self.data})
+
+    @Inputs.df
+    def set_df(self, df):
+        self.df = df
+        self.console.kernel.shell.push({'df': self.df})
+
+    @Inputs.df1
+    def set_df1(self, df):
+        self.df1 = df
+        self.console.kernel.shell.push({'df1': self.df1})
+
+    @Inputs.df2
+    def set_df2(self, df):
+        self.df2 = df
+        self.console.kernel.shell.push({'df2': self.df2})
+
+    @Inputs.df3
+    def set_df3(self, df):
+        self.df3 = df
+        self.console.kernel.shell.push({'df3': self.df3})
+
+    @Inputs.transformer
+    def set_transformer(self, transformer):
+        self.transformer = transformer
+        self.console.kernel.shell.push({'transformer': self.transformer})
+
+    @Inputs.estimator
+    def set_estimator(self, estimator):
+        self.estimator = estimator
+        self.console.kernel.shell.push({'estimator': self.estimator})
+
+    @Inputs.model
+    def set_model(self, model):
+        self.model = model
+        self.console.kernel.shell.push({'model': self.model})
+
     def __init__(self):
         super().__init__()
 
-        self.spark_logo = """
-              ____              __
-             / __/__  ___ _____/ /__
-            _\ \/ _ \/ _ `/ __/  '_/
-           /__ / .__/\_,_/_/ /_/\_\   version {version}
-              /_/
-    
-        """.format(version=2.2)#self.sc.version)
+        self.spark_logo = "      ____              __     / __/__  ___ _____/ /__    _\ \/ _ \/ _ `/ __/  '_/   /__ / .__/\_,_/_/ /_/\_\   version {version}      /_/".format(version = self.sc.version)
 
         for s in self.libraryListSource:
             s.flags = 0
@@ -247,9 +309,9 @@ class OWPySparkScript(SparkEnvironment, widget.OWWidget):
         gui.label(
                 self.infoBox, self,
                 "<p>Execute python script.</p><p>Input variables:<ul><li> " + \
-                "<li>".join(t.name for t in self.inputs) + \
+                "<li>".join(t for t in dir(self.Inputs) if isinstance(getattr(self.Inputs, t), widget.Input)) + \
                 "</ul></p><p>Output variables:<ul><li>" + \
-                "<li>".join(t.name for t in self.outputs) + \
+                "<li>".join(t for t in dir(self.Outputs) if isinstance(getattr(self.Outputs, t), widget.Output)) + \
                 "</ul></p>"
         )
 
@@ -331,9 +393,11 @@ class OWPySparkScript(SparkEnvironment, widget.OWWidget):
         self.splitCanvas.addWidget(self.consoleBox)
 
         # self.console = PySparkConsole(self.__dict__, self, sc = self.sc)
-        self.console = EmbedIPython(sc=self.sc, hc=self.hc, sqlContext=self.sqlContext, in_object=self.in_object, out_object=self.out_object)
+        self.console = EmbedIPython(sc=self.sc, hc=self.hc, sqlContext=self.sqlContext, data=self.data, df=self.df,
+                                    df1=self.df1, df2=self.df2, df3=self.df3,
+                                    transformer=self.transformer, estimator=self.estimator, model=self.model)
         # self.console.kernel.shell.run_cell('%pylab qt')
-        self.console.kernel.shell.run_cell("print('{sparklogo}')".format(sparklogo = self.spark_logo))
+        self.console.kernel.shell.run_cell('print("{sparklogo}")'.format(sparklogo = self.spark_logo))
 
         self.consoleBox.layout().addWidget(self.console)
         self.consoleBox.setAlignment(Qt.AlignBottom)
@@ -347,10 +411,6 @@ class OWPySparkScript(SparkEnvironment, widget.OWWidget):
         # self.splitCanvas.splitterMoved[int, int].connect(self.onSpliterMoved)
         self.controlArea.layout().addStretch(1)
         self.resize(800, 600)
-
-    def setObject(self, obj):
-        self.in_object = obj
-        self.console.kernel.shell.push({'in_object': self.in_object})
 
 
     def handleNewSignals(self):
@@ -468,5 +528,11 @@ class OWPySparkScript(SparkEnvironment, widget.OWWidget):
     def commit(self):
         self._script = str(self.text.toPlainText())
         self.console.execute(self._script)
-        self.out_object = self.console.kernel.shell.user_ns['out_object']
-        self.send("out_object", self.out_object)
+        self.Outputs.data.send(self.console.kernel.shell.user_ns['data'])
+        self.Outputs.df.send(self.console.kernel.shell.user_ns['df'])
+        self.Outputs.df1.send(self.console.kernel.shell.user_ns['df1'])
+        self.Outputs.df2.send(self.console.kernel.shell.user_ns['df2'])
+        self.Outputs.df3.send(self.console.kernel.shell.user_ns['df3'])
+        self.Outputs.transformer.send(self.console.kernel.shell.user_ns['transformer'])
+        self.Outputs.estimator.send(self.console.kernel.shell.user_ns['estimator'])
+        self.Outputs.model.send(self.console.kernel.shell.user_ns['model'])

@@ -15,7 +15,7 @@ class OWCountVectorizer(SparkEstimator, widget.OWWidget):
 
     learner = feature.CountVectorizer
     class Parameters:
-        inputCol = Parameter(str, 'tokens', 'Input column', input_column=True, input_dtype=Parameter.ARRAY_STRING)
+        inputCol = Parameter(str, 'tokens', 'Input column', input_column=True, input_dtype=Parameter.T_ARRAY_STRING)
         outputCol = Parameter(str, 'vector', 'Output1 column', output_column=True)
         minTF = Parameter(float, 1.0, 'Minimum term frequency'),
         minDF = Parameter(float, 1.0, 'Minimum document frequency')

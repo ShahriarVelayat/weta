@@ -16,6 +16,6 @@ class OWIDF(SparkEstimator, widget.OWWidget):
     learner = feature.IDF
 
     class Parameters:
-        minDocFreq: Parameter(int, 0, 'Minimum document frequency')
-        inputCol: Parameter(str, 'tf', 'Input column', input_column=True, input_dtype=Parameter.VECTOR)
-        outputCol: Parameter(str, 'idf', 'Output column', output_column=True)
+        minDocFreq = Parameter(int, 0, 'Minimum document frequency')
+        inputCol = Parameter(str, 'tf', 'Input column', input_column=True, input_dtype=Parameter.T_VECTOR)
+        outputCol = Parameter(str, 'idf', 'Output column', output_column=True)

@@ -1,12 +1,19 @@
+from collections import OrderedDict
+
 import weta.core.nltk_tokenizer
+from pyspark import SparkConf, SQLContext, SparkContext
 from pyspark.ml import classification
 from pyspark.ml import feature
 from pyspark.ml import regression
+from weta.gui.spark_environment import SparkEnvironment
 
 global sqlContext
 
+sqlContext = SparkEnvironment().sqlContext
+
 
 def spark_transformer(transformer_cls, inputs, settings):
+    assert 'DataFrame' in inputs
     input_data_frame = inputs['DataFrame']
     params = settings
     transformer = transformer_cls()
@@ -20,6 +27,7 @@ def spark_transformer(transformer_cls, inputs, settings):
 
 
 def spark_estimator(estimator_cls, inputs, settings):
+    assert 'DataFrame' in inputs
     input_data_frame = inputs['DataFrame']
     params = settings
     estimator = estimator_cls()
@@ -86,9 +94,9 @@ def spark_naive_bayes(inputs, settings):
 # ----------------------- data -----------------------
 
 def dataframe_reader(inputs, settings):
-    df = sqlContext.read.format(settings['setting_format']) \
+    df = sqlContext.read.format(settings['format']) \
         .options(header='true', inferschema='true') \
-        .load(settings['setting_file_path'])
+        .load(settings['file_path'])
 
     return {'DataFrame': df}
 

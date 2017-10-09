@@ -21,7 +21,7 @@ class OWNLTKTokenizer(SparkTransformer, widget.OWWidget):
     learner = weta.core.nltk_tokenizer.NLTKTokenizer
 
     class Parameters:
-        inputCol = Parameter(str, 'text', 'Input column', input_column=True, input_dtype=Parameter.STRING)
+        inputCol = Parameter(str, 'text', 'Input column', input_column=True, input_dtype=Parameter.T_STRING)
         outputCol = Parameter(str, 'tokens', 'Output column', output_column=True)
         # 'minTokenLength': Parameter(int, 1, 'Minimum token length'),
         # 'removePunctuation': Parameter(bool, True, 'Remove punctuation?'),

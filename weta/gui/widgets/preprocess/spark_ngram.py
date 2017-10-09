@@ -17,5 +17,5 @@ class OWNGram(SparkTransformer, widget.OWWidget):
 
     class Parameters:
         n = Parameter(int, 2, 'N')
-        inputCol = Parameter(str, 'text', 'Input column', input_column=True, input_dtype=Parameter.ARRAY_STRING)
+        inputCol = Parameter(str, 'text', 'Input column', input_column=True, input_dtype=Parameter.T_ARRAY_STRING)
         outputCol = Parameter(str, 'tokens', 'Output column', output_column=True)

@@ -16,8 +16,8 @@ class OWGenericTransformation(SparkTransformer, widget.OWWidget):
         Transformer = widget.Input("Transformer", Transformer)
 
     class Parameters:
-        inputCol = Parameter(str, 'input', 'Input column', input_column=True),
-        outputCol = Parameter(str, 'output', 'Output column', output_column=True),
+        inputCol = Parameter(str, 'input', 'Input column', input_column=True)
+        outputCol = Parameter(str, 'output', 'Output column', output_column=True)
 
     @Inputs.Transformer
     def set_transformer(self, transformer):

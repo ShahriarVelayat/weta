@@ -54,7 +54,7 @@ class SparkTransformer(SparkBase):
             self.output_data_frame = None
             self.v_apply_button.setEnabled(False)
             self.error('Input data frame does not exist')
-            for name, parameter in self.get_class_variables(self, 'Parameters', Parameter).items():
+            for name, parameter in self.parameters_meta().items():
                 if parameter.input_column:
                     combo = getattr(self.controls, name)
                     combo.setEditable = True
@@ -64,7 +64,7 @@ class SparkTransformer(SparkBase):
             # update data column combobox
             # types = dict(self.input_data_frame.dtypes)
             columns = self.DataFrame.columns
-            for name, parameter in self.get_class_variables(self, 'Parameters', Parameter).items():
+            for name, parameter in self.parameters_meta().items():
                 if parameter.input_column:
                     saved_value = getattr(self, name)
                     saved_value = saved_value if saved_value in columns else columns[0]
@@ -82,7 +82,7 @@ class SparkTransformer(SparkBase):
 
         df = self.DataFrame
         types = dict(df.dtypes)
-        for name, parameter in self.get_class_variables(self, 'Parameters', Parameter).items():
+        for name, parameter in self.parameters_meta().items():
             if parameter.input_column and parameter.input_dtype is not None:
                 input_column = getattr(self, name)
                 if types[input_column] != parameter.input_dtype:

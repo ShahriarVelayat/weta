@@ -14,9 +14,9 @@ from weta.gui.spark_environment import SparkEnvironment
 
 class Parameter:
 
-    STRING = 'string'
-    ARRAY_STRING = 'array<string>'
-    VECTOR = 'vector'
+    T_STRING = 'string'
+    T_ARRAY_STRING = 'array<string>'
+    T_VECTOR = 'vector'
 
     def __init__(self, type, default_value, label, description='', items=None, input_column=False, output_column=False, input_dtype=None):
         self.type = type
@@ -51,9 +51,8 @@ class SparkBase(SparkEnvironment):
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
 
-        # handle parameter settings
-
-        for name, parameter in cls.get_class_variables(cls, 'Parameters', Parameter).items():
+        # convert parameters as settings dynamically
+        for name, parameter in cls.parameters_meta0().items():
             setattr(cls, name, Setting(parameter.default_value, name=name, tag=parameter))
 
     def __init__(self):
@@ -84,7 +83,7 @@ class SparkBase(SparkEnvironment):
 
     def initParametersUI(self):
 
-        for name, parameter in self.get_class_variables(self, 'Parameters', Parameter).items():
+        for name, parameter in self.parameters_meta().items():
             if parameter.items is not None:
                 gui.comboBox(self.v_parameters_box, self, name, label=parameter.label, labelWidth=300,
                              valueType=parameter.type, items=parameter.items)
@@ -92,6 +91,9 @@ class SparkBase(SparkEnvironment):
                 gui.checkBox(self.v_parameters_box, self, name, label=parameter.label, labelWidth=300)
             elif parameter.input_column:
                 items = tuple([parameter.default_value])
+                label = parameter.label
+                if parameter.input_dtype is not None:
+                    label += ' (%s)' % parameter.input_dtype
                 gui.comboBox(self.v_parameters_box, self, name, label=parameter.label, labelWidth=300,
                              valueType=parameter.type, items=items, editable=True, sendSelectedValue=True)
             else:
@@ -107,13 +109,19 @@ class SparkBase(SparkEnvironment):
     def _validate_parameters(self):
         return True
 
-    @staticmethod
-    def get_class_variables(obj, cls_name, type):
-        if not hasattr(obj, cls_name):
-            return {}
-        else:
-            cls = getattr(obj, cls_name)
-            return {name: getattr(cls, name) for name in dir(cls) if isinstance(getattr(cls, name), type)}
+    @classmethod
+    def parameters_meta0(cls):
+        return inner_class_variables(cls, 'Parameters', Parameter)
+
+    def parameters_meta(self):
+        return inner_class_variables(self, 'Parameters', Parameter)
+
+    def inputs_meta(self):
+        return inner_class_variables(self, 'Inputs', widget.Input)
+
+    def outputs_meta(self):
+        return inner_class_variables(self, 'Outputs', widget.Output)
+
 
     def apply(self):
         if self._task is not None:
@@ -129,12 +137,12 @@ class SparkBase(SparkEnvironment):
         self.hide()
 
         # collect params
-        params = {name: getattr(self, name) for name, parameter in self.get_class_variables(self, 'Parameters', Parameter).items()}
+        params = {name: getattr(self, name) for name, parameter in self.parameters_meta().items()}
         # self._apply(params)
 
         # collect inputs
         inputs = {}
-        for input_name, input_var in self.get_class_variables(self, 'Inputs', widget.Input):
+        for input_name, input_var in self.inputs_meta().items():
             assert input_name == input_var.name
             input_value = getattr(self, input_name) if hasattr(self, input_name) else None
             inputs[input_name] = input_value
@@ -189,7 +197,7 @@ class SparkBase(SparkEnvironment):
             assert isinstance(results, dict)
             # collect outputs
             outputs = {}
-            for output_name, output_var in self.get_class_variables(self, 'Outputs', widget.Output).items():
+            for output_name, output_var in self.outputs_meta().items():
                 assert output_name == output_var.name
                 outputs[output_name] = output_var
             for output_name, output_value in results.items():
@@ -251,3 +259,10 @@ class Task:
         # ... and wait until computation finishes
         concurrent.futures.wait([self.future])
 
+
+def inner_class_variables(ctx, inner_cls_name, type):
+    if not hasattr(ctx, inner_cls_name):
+        return {}
+    else:
+        cls = getattr(ctx, inner_cls_name)
+        return {name: getattr(cls, name) for name in dir(cls) if isinstance(getattr(cls, name), type)}

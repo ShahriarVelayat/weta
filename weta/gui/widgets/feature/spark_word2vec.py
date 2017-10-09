@@ -16,7 +16,7 @@ class OWWord2Vec(SparkEstimator, widget.OWWidget):
     learner = feature.Word2Vec
 
     class Parameters:
-        inputCol = Parameter(str, 'tokens', 'Input column', input_column=True, input_dtype=Parameter.ARRAY_STRING)
+        inputCol = Parameter(str, 'tokens', 'Input column', input_column=True, input_dtype=Parameter.T_ARRAY_STRING)
         outputCol = Parameter(str, 'vector', 'Output1 column', output_column=True)
         vectorSize = Parameter(int, 100, 'Vector size')
         minCount = Parameter(int, 5, 'Minimum count')

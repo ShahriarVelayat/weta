@@ -17,5 +17,5 @@ class OWOneHotEncoder(SparkTransformer, widget.OWWidget):
 
     class Parameters:
         dropLast = Parameter(bool, True, 'Drop the last category')
-        inputCol = Parameter(str, 'tokens', 'Input column (%s)', input_column=True, input_dtype=Parameter.ARRAY_STRING)
+        inputCol = Parameter(str, 'tokens', 'Input column (%s)', input_column=True, input_dtype=Parameter.T_ARRAY_STRING)
         outputCol = Parameter(str, 'features', 'Output column', output_column=True)

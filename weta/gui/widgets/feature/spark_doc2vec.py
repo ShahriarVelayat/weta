@@ -18,16 +18,16 @@ class OWDoc2Vec(SparkEstimator, widget.OWWidget):
 
     learner = None
     class Parameters:
-        inputCol = Parameter(str, 'tokens', 'Input column', input_column=True, input_dtype=Parameter.ARRAY_STRING)
+        inputCol = Parameter(str, 'tokens', 'Input column', input_column=True, input_dtype=Parameter.T_ARRAY_STRING)
         outputCol = Parameter(str, 'vector', 'Output1 column', output_column=True)
         vectorSize = Parameter(int, 100, 'Vector size')
         minCount = Parameter(int, 5, 'Minimum count')
-        # 'numPartitions': Parameter(int, 1, 'Number of partitions '),
-        # 'stepSize': Parameter(float, 0.025, 'Step size'),
-        # 'maxIter': Parameter(int, 1, 'Maximum Iteration'),
-        # 'seed': Parameter(int, None, 'Seed'),
+        # numPartitions = Parameter(int, 1, 'Number of partitions ')
+        # stepSize = Parameter(float, 0.025, 'Step size')
+        # maxIter = Parameter(int, 1, 'Maximum Iteration')
+        # seed = Parameter(int, None, 'Seed')
         windowSize = Parameter(int, 5, 'Window size')
-        # 'maxSentenceLength': Parameter(int, 1000, 'Maximum sentence length'),
+        # maxSentenceLength = Parameter(int, 1000, 'Maximum sentence length')
         workers = Parameter(int, 4, 'Workers')
 
     def _apply(self, params):

@@ -16,7 +16,7 @@ class OWRegexTokenizer(SparkTransformer, widget.OWWidget):
     learner = feature.RegexTokenizer
 
     class Parameters:
-        inputCol = Parameter(str, 'text', 'Input column', input_column=True, input_dtype=Parameter.STRING)
+        inputCol = Parameter(str, 'text', 'Input column', input_column=True, input_dtype=Parameter.T_STRING)
         outputCol = Parameter(str, 'tokens', 'Output column', output_column=True)
         minTokenLength = Parameter(int, 1, 'Minimum token length')
         gaps = Parameter(bool, True, 'Gaps?')

@@ -19,5 +19,5 @@ class OWVectorAssembler(SparkTransformer, widget.OWWidget):
     learner = feature.VectorAssembler
 
     class Parameters:
-        inputCols = Parameter(str, 'vectors', 'Input columns', input_column=True, input_dtype=Parameter.VECTOR)
+        inputCols = Parameter(str, 'vectors', 'Input columns', input_column=True, input_dtype=Parameter.T_VECTOR)
         outputCol = Parameter(str, 'assembled_vector', 'Output1 column', output_column=True)

@@ -14,6 +14,7 @@ class OWDataFrameJoiner(SparkBase, widget.OWWidget):
 
     DataFrame1 = None  # type: DataFrame
     DataFrame2 = None  # type: DataFrame
+
     class Inputs:
         DataFrame1 = widget.Input('DataFrame1', DataFrame, id='df1')
         DataFrame2 = widget.Input('DataFrame2', DataFrame, id='df2')
@@ -21,10 +22,9 @@ class OWDataFrameJoiner(SparkBase, widget.OWWidget):
     class Outputs:
         DataFrame = widget.Output('DataFrame', DataFrame)
 
-    parameters = OrderedDict({
-        'id': Parameter(str, '_id', 'ID column to join on', input_column=True),
-        # 'test_weight': Parameter(float, 0.1, 'Test weight of split ratio'),
-    })
+    class Parameters:
+        id = Parameter(str, '_id', 'ID column to join on', input_column=True)
+        # test_weight = Parameter(float, 0.1, 'Test weight of split ratio')
 
     @Inputs.DataFrame1
     def set_data_frame1(self, data_frame):
@@ -57,7 +57,3 @@ class OWDataFrameJoiner(SparkBase, widget.OWWidget):
                 return False
 
         return True
-
-    def _apply(self, params):
-        output_data_frame = self.DataFrame1.join(self.DataFrame2, [params['id']])
-        self.Outputs.DataFrame.send(output_data_frame)
