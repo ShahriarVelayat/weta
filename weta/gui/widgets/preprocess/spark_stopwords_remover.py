@@ -13,17 +13,10 @@ class OWStopWordsRemover(SparkTransformer, widget.OWWidget):
     description = "StopWords Remover"
     icon = "../assets/StopWordsRemover.svg"
 
-    box_text = 'StopWords Remover'
-    input_dtype = 'array<string>'
-
     learner = feature.StopWordsRemover
-    parameters = OrderedDict({
-        'inputCol': Parameter(str, 'text', 'Input column (%s)' % input_dtype, data_column=True),
-        'outputCol': Parameter(str, 'tokens', 'Output column'),
-        # 'stopWords': Parameter(list, None, 'Stopwords list'),
-        'caseSensitive': Parameter(bool, False, 'Case sensitive'),
-    })
 
-    def _apply(self, params):
-        feature.StopWordsRemover.loadDefaultStopWords('english')  # TODO: default load english stop words
-        super(OWStopWordsRemover, self)._apply(params)
+    class Parameters:
+        inputCol = Parameter(str, 'text', 'Input column', input_column=True, input_dtype=Parameter.T_ARRAY_STRING)
+        outputCol = Parameter(str, 'tokens', 'Output column', output_column=True)
+        # 'stopWords': Parameter(list, None, 'Stopwords list')
+        caseSensitive = Parameter(bool, False, 'Case sensitive')

@@ -33,12 +33,13 @@ class SparkEnvironment:
             parameters['spark.app.name'] = 'weta_workflow'
             parameters['spark.master'] = 'local'  # 'yarn'
             parameters["spark.executor.instances"] = "8"
-            parameters["spark.executor.cores"] = "4"
-            parameters["spark.executor.memory"] = "8g"
+            parameters["spark.executor.cores"] = "8"
+            parameters["spark.executor.memory"] = "2g"
             parameters["spark.driver.cores"] = "4"
-            parameters["spark.driver.memory"] = "2g"
+            parameters["spark.driver.memory"] = "1g"
             parameters["spark.logConf"] = "false"
             parameters["spark.app.id"] = "dummy"
+            # parameters['spark.debug.maxToStringFields'] = 100
 
         cls = SparkEnvironment
         if cls._sc:

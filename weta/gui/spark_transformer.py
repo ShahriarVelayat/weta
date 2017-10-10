@@ -2,23 +2,20 @@ import pyspark.sql
 import pyspark.ml
 from Orange.widgets import widget, gui
 from PyQt5 import QtWidgets, QtGui
-from .spark_base import SparkBase
+from .spark_base import SparkBase, Parameter
 
 
 class SparkTransformer(SparkBase):
 
     # -----------Inputs / Outputs ---------------------
-    input_data_frame = None
+    DataFrame = None
 
     class Inputs:
-        data_frame = widget.Input("DataFrame", pyspark.sql.DataFrame)
-
-    output_data_frame = None
-    output_transformer = None
+        DataFrame = widget.Input("DataFrame", pyspark.sql.DataFrame)
 
     class Outputs:
-        data_frame = widget.Output("DataFrame", pyspark.sql.DataFrame)
-        transformer = widget.Output("Transformer", pyspark.ml.Transformer)
+        DataFrame = widget.Output("DataFrame", pyspark.sql.DataFrame)
+        Transformer = widget.Output("Transformer", pyspark.ml.Transformer)
 
     learner = None  # type: type
     input_dtype = None
@@ -45,20 +42,20 @@ class SparkTransformer(SparkBase):
 
         self.v_help_box.layout().addWidget(self.v_doc_text)
 
-    @Inputs.data_frame
+    @Inputs.DataFrame
     def set_input_data_frame(self, data_frame):
-        self.input_data_frame = data_frame
+        self.DataFrame = data_frame
 
     def _validate_input(self):
         if not super(SparkTransformer, self)._validate_input():
             return False
 
-        if self.input_data_frame is None:
+        if self.DataFrame is None:
             self.output_data_frame = None
             self.v_apply_button.setEnabled(False)
             self.error('Input data frame does not exist')
-            for name, parameter in self.parameters.items():
-                if parameter.data_column:
+            for name, parameter in self.parameters_meta().items():
+                if parameter.input_column:
                     combo = getattr(self.controls, name)
                     combo.setEditable = True
             return False
@@ -66,9 +63,9 @@ class SparkTransformer(SparkBase):
             self.v_apply_button.setEnabled(True)
             # update data column combobox
             # types = dict(self.input_data_frame.dtypes)
-            columns = self.input_data_frame.columns
-            for name, parameter in self.parameters.items():
-                if parameter.data_column:
+            columns = self.DataFrame.columns
+            for name, parameter in self.parameters_meta().items():
+                if parameter.input_column:
                     saved_value = getattr(self, name)
                     saved_value = saved_value if saved_value in columns else columns[0]
                     combo = getattr(self.controls, name)
@@ -83,28 +80,18 @@ class SparkTransformer(SparkBase):
         if not super(SparkTransformer, self)._validate_parameters():
             return False
 
-        df = self.input_data_frame
+        df = self.DataFrame
         types = dict(df.dtypes)
-        if hasattr(self, 'inputCol'):
-            input_column = self.inputCol
-            if types[input_column] != self.input_dtype:
-                self.error('Input column must be %s type' % self.input_dtype)
-                return False
-        if hasattr(self, 'outputCol'):
-            output_column = self.outputCol
-            if output_column in df.columns:
-                self.error('Output column must not override an existing one')
-                return False
+        for name, parameter in self.parameters_meta().items():
+            if parameter.input_column and parameter.input_dtype is not None:
+                input_column = getattr(self, name)
+                if types[input_column] != parameter.input_dtype:
+                    self.error('Input column must be %s type' % parameter.input_dtype)
+                    return False
+            if parameter.output_column:
+                output_column = getattr(self, name)
+                if output_column in df.columns:
+                    self.error('Output column must not override an existing one')
+                    return False
 
         return True
-
-    def _apply(self, params):
-        transformer = self.learner()
-        transformer.setParams(**params)
-
-        self.output_transformer = transformer
-        self.output_transformer.input_dtype = self.input_dtype  # attach a required input dtype
-        self.output_data_frame = transformer.transform(self.input_data_frame)
-
-        self.Outputs.data_frame.send(self.output_data_frame)
-        self.Outputs.transformer.send(self.output_transformer)

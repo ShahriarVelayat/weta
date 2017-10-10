@@ -18,17 +18,14 @@ class OWNLTKTokenizer(SparkTransformer, widget.OWWidget):
     description = "NLTK Tokenizer"
     icon = "../assets/NLTKTokenizer.svg"
 
-    box_text = 'NLTK Tokenizer'
-    input_dtype = 'string'
-
     learner = weta.core.nltk_tokenizer.NLTKTokenizer
-    parameters = OrderedDict({
-        'inputCol': Parameter(str, 'text', 'Input column (%s)' % input_dtype, data_column=True),
-        'outputCol': Parameter(str, 'tokens', 'Output column'),
+
+    class Parameters:
+        inputCol = Parameter(str, 'text', 'Input column', input_column=True, input_dtype=Parameter.T_STRING)
+        outputCol = Parameter(str, 'tokens', 'Output column', output_column=True)
         # 'minTokenLength': Parameter(int, 1, 'Minimum token length'),
         # 'removePunctuation': Parameter(bool, True, 'Remove punctuation?'),
         # 'stem': Parameter(bool, True, 'Stem?'),
         # 'toLowercase': Parameter(bool, True, 'Convert to lower case?')
-    })
 
 

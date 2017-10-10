@@ -13,20 +13,18 @@ class OWLinearRegression(SparkEstimator, widget.OWWidget):
     description = "Linear Regression Algorithm"
     icon = "../assets/LinearRegression.svg"
 
-    box_text = "Linear Regression"
-
     learner = regression.LinearRegression
-    parameters = OrderedDict({
-        'featuresCol': Parameter(str, 'features', 'Feature column', data_column=True),
-        'labelCol': Parameter(str, 'label', 'Label column', data_column=True),
-        # 'weightCol': Parameter(str, 'weight', 'Weight Column'),
+    
+    class Parameters:
+        featuresCol = Parameter(str, 'features', 'Feature column', input_column=True)
+        labelCol = Parameter(str, 'label', 'Label column', input_column=True)
+        # weightCol =  Parameter(str, 'weight', 'Weight Column')
 
-        'maxIter': Parameter(int, 100, 'Maximal iteration'),
-        'regParam': Parameter(float, 0.0, 'Regression Parameter'),
-        'elasticNetParam': Parameter(float, 0.0, 'Elastic Net Parameter'),
-        'tol': Parameter(float, 0.000001, 'tol'),
-        'fitIntercept': Parameter(bool, True, 'Fit intercept'),
-        'standardization': Parameter(bool, False, 'Standardization'),
-        'solver': Parameter(str, 'auto', 'Solver'),
-        'aggregationDepth': Parameter(int, 2, 'Aggregation depth')
-    })
+        maxIter = Parameter(int, 100, 'Maximal iteration')
+        regParam = Parameter(float, 0.0, 'Regression Parameter')
+        elasticNetParam = Parameter(float, 0.0, 'Elastic Net Parameter')
+        tol = Parameter(float, 0.000001, 'tol')
+        fitIntercept = Parameter(bool, True, 'Fit intercept')
+        standardization = Parameter(bool, False, 'Standardization')
+        solver = Parameter(str, 'auto', 'Solver')
+        aggregationDepth = Parameter(int, 2, 'Aggregation depth')
