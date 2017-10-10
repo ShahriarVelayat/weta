@@ -90,7 +90,7 @@ class Exporter:
                     continue
 
                 # start generating
-                code.append('\n# %s' % node['title'])
+                code.append('\n# %% ' + node['title'])  # for run cell in VS code
 
                 input_entries = []
                 for input in node['inputs'].keys():
