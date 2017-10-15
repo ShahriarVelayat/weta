@@ -393,7 +393,8 @@ class OWPySparkScript(SparkEnvironment, widget.OWWidget):
         self.splitCanvas.addWidget(self.consoleBox)
 
         # self.console = PySparkConsole(self.__dict__, self, sc = self.sc)
-        self.console = EmbedIPython(sc=self.sc, hc=self.hc, sqlContext=self.sqlContext, data=self.data, df=self.df,
+        self.console = EmbedIPython(sc=self.sc, hc=self.hc, sqlContext=self.sqlContext,
+                                    data=self.data, df=self.df,
                                     df1=self.df1, df2=self.df2, df3=self.df3,
                                     transformer=self.transformer, estimator=self.estimator, model=self.model)
         # self.console.kernel.shell.run_cell('%pylab qt')
@@ -440,7 +441,7 @@ class OWPySparkScript(SparkEnvironment, widget.OWWidget):
         filename = str(filename[0])
         if filename:
             name = os.path.basename(filename)
-            contents = open(filename, "rb").read().decode("utf-8", errors = "ignore")
+            contents = open(filename, "rb", encoding="utf-8").read()#.decode("utf-8", errors = "ignore")
             self.libraryList.append(Script(name, contents, 0, filename))
             self.setSelectedScript(len(self.libraryList) - 1)
 
@@ -521,7 +522,7 @@ class OWPySparkScript(SparkEnvironment, widget.OWWidget):
             else:
                 fn = head
 
-            f = open(fn, 'w')
+            f = open(fn, 'w', encoding='utf-8')
             f.write(self.text.toPlainText())
             f.close()
 

@@ -1,14 +1,6 @@
-from collections import OrderedDict
-import nltk
-import string as string_module
-
+import weta.mllib.nltk_tokenizer
 from Orange.widgets import widget
-import pyspark.ml
-from pyspark.sql.functions import udf
-from pyspark.sql.types import IntegerType, StringType, ArrayType
 from weta.gui.spark_base import Parameter
-from pyspark.ml.param.shared import *
-import weta.core.nltk_tokenizer
 from weta.gui.spark_estimator import SparkTransformer
 
 
@@ -18,7 +10,7 @@ class OWNLTKTokenizer(SparkTransformer, widget.OWWidget):
     description = "NLTK Tokenizer"
     icon = "../assets/NLTKTokenizer.svg"
 
-    learner = weta.core.nltk_tokenizer.NLTKTokenizer
+    learner = weta.mllib.nltk_tokenizer.NLTKTokenizer
 
     class Parameters:
         inputCol = Parameter(str, 'text', 'Input column', input_column=True, input_dtype=Parameter.T_STRING)

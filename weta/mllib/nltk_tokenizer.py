@@ -1,11 +1,11 @@
-import nltk
 import string as string_module
 
+import nltk
 import pyspark.ml
-from pyspark import since, keyword_only
-from pyspark.sql.functions import udf
-from pyspark.sql.types import IntegerType, StringType, ArrayType
+from pyspark import keyword_only
 from pyspark.ml.param.shared import *
+from pyspark.sql.functions import udf
+from pyspark.sql.types import StringType, ArrayType
 
 stemmer = nltk.stem.porter.PorterStemmer()
 remove_punctuation_map = dict((ord(char), None) for char in string_module.punctuation)
@@ -32,6 +32,7 @@ class NLTKTokenizer(pyspark.ml.Transformer, HasInputCol, HasOutputCol):
     """
     Use NLTK tokenizer: lower case, remove punctuation, tokenize, stem, filter empty token
     """
+
     @keyword_only
     def __init__(self, inputCol=None, outputCol=None):
         """

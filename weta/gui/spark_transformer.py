@@ -51,7 +51,6 @@ class SparkTransformer(SparkBase):
             return False
 
         if self.DataFrame is None:
-            self.output_data_frame = None
             self.v_apply_button.setEnabled(False)
             self.error('Input data frame does not exist')
             for name, parameter in self.parameters_meta().items():

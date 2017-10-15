@@ -22,7 +22,8 @@ ENTRY_POINTS = {
         'Weta Preprocess = weta.gui.widgets.preprocess',
         'Weta Feature = weta.gui.widgets.feature',
         'Weta Learn = weta.gui.widgets.learn',
-        'Weta Visualisation = weta.gui.widgets.visualise'
+        'Weta Visualisation = weta.gui.widgets.visualise',
+        'NZ Police = weta.gui.widgets.nzpolice'
     ),
 
     # Register widget help
@@ -63,7 +64,8 @@ if __name__ == '__main__':
                   'weta.gui.widgets.preprocess',
                   'weta.gui.widgets.feature',
                   'weta.gui.widgets.learn',
-                  'weta.gui.widgets.visualise'],
+                  'weta.gui.widgets.visualise',
+                  'weta.gui.widgets.nzpolice'],
         package_data={
             'weta.gui': ['tutorials/*.ows'],
             'weta.gui.widgets': ['icons/*', 'assets/*'],
