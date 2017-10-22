@@ -19,6 +19,6 @@ class OWHashingTF(SparkTransformer, widget.OWWidget):
 
     class Parameters:
         inputCol = Parameter(str, 'tokens', 'Input column', input_column=True, input_dtype=Parameter.T_ARRAY_STRING)
-        outputCol = Parameter(str, 'vector', 'Output column', output_column=True)
+        outputCol = Parameter(str, 'tf', 'Output column', output_column=True)
         numFeatures = Parameter(int, 1 << 18, 'Number of features')
         binary = Parameter(bool, False, 'Binary')

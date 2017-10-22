@@ -12,36 +12,29 @@ class OWDataFrameSplitter(SparkBase, widget.OWWidget):
     description = 'Split a DataFrame into train and test datasets with a fixed ratio'
     icon = '../assets/DataFrameSplitter.svg'
 
-    input_data_frame = None
+    DataFrame = None
     class Inputs:
-        data_frame = widget.Input('DataFrame', DataFrame)
+        DataFrame = widget.Input('DataFrame', DataFrame)
 
     class Outputs:
-        train_data_frame = widget.Output('DataFrame1', DataFrame, id='train')
-        test_data_frame = widget.Output('DataFrame2', DataFrame, id='test')
+        DataFrame1 = widget.Output('DataFrame1', DataFrame, id='train')
+        DataFrame2 = widget.Output('DataFrame2', DataFrame, id='test')
 
-    parameters = OrderedDict({
-        'train_weight': Parameter(float, 0.9, 'Train weight of split ratio'),
-        'test_weight': Parameter(float, 0.1, 'Test weight of split ratio'),
-    })
+    class Parameters:
+        train_weight =  Parameter(float, 0.9, 'Train weight of split ratio')
+        test_weight =  Parameter(float, 0.1, 'Test weight of split ratio')
 
-    @Inputs.data_frame
-    def set_input_data_frame(self, data_frame):
-        self.input_data_frame = data_frame
+    @Inputs.DataFrame
+    def set_data_frame(self, data_frame):
+        self.DataFrame = data_frame
 
     def _validate_input(self):
         if not super(OWDataFrameSplitter, self)._validate_input():
             return False
 
-        if self.input_data_frame is None:
-            self.output_data_frame = None
+        if self.DataFrame is None:
             self.v_apply_button.setEnabled(False)
             self.error('Input data frame does not exist')
         else:
             self.v_apply_button.setEnabled(True)
             return True
-
-    def _apply(self, params):
-        train, test = self.input_data_frame.randomSplit([self.train_weight, self.test_weight], seed=12345)
-        self.Outputs.train_data_frame.send(train)
-        self.Outputs.test_data_frame.send(test)

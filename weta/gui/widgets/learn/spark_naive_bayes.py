@@ -21,8 +21,8 @@ class OWNaiveBayes(SparkEstimator, widget.OWWidget):
         # predictionCol =  Parameter(str, 'prediction', 'Prediction column')
         # probabilityCol =  Parameter(str, 'probability', 'Probability column')
         # rawPredictionCol =  Parameter(str, 'rawPrediction', 'Raw probability column')
-        # weightCol =  Parameter(str, 'weight', 'Weight Column')
+        weightCol =  Parameter(str, 'weight', 'Weight Column')
 
         smoothing =  Parameter(float, 1.0, 'Smoothing')
-        modelType =  Parameter(str, 'multinomial', 'Model Type')
+        # modelType =  Parameter(str, 'multinomial', 'Model Type')
         # 'thresholds =  Parameter(list, None, 'Thresholds') # list[float]

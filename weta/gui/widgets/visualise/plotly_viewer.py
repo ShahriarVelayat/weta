@@ -11,12 +11,12 @@ import tempfile
 from weta.gui.spark_environment import SparkEnvironment
 
 
-class OWPlotViewer(SparkEnvironment, widget.OWWidget):
+class OWPlotlyViewer(SparkEnvironment, widget.OWWidget):
     # --------------- Widget metadata protocol ---------------
     priority = 2
 
-    name = "Plot"
-    description = "A plot canvas"
+    name = "Plotly"
+    description = "A plotly canvas"
     icon = "../assets/DataFrameViewer.svg"
 
     input_figure: go.Figure = None

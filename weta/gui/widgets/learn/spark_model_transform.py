@@ -23,7 +23,7 @@ class OWModelTransformation(SparkTransformer, widget.OWWidget):
 
     class Parameters:
         inputCol = Parameter(str, 'input', 'Input column', input_column=True)
-        outputCol = Parameter(str, 'output', 'Output column', output_column=True)
+        # outputCol = Parameter(str, 'output', 'Output column', output_column=True)
 
     @Inputs.Model
     def set_model(self, model):
@@ -39,11 +39,7 @@ class OWModelTransformation(SparkTransformer, widget.OWWidget):
 
         # if self.inputCol not in self.input_data_frame.columns:
         #     self.inputCol = self.input_transformer.inputCol
-        self.input_dtype = self.Model.input_dtype
+        # self.input_dtype = self.Model.input_dtype
         return True
 
-    def _apply(self, params):
-        model = self.Model
-        output_data_frame = model.transform(self.input_data_frame)
-        self.Outputs.DataFrame.send(output_data_frame)
-        self.Outputs.Model.send(self.Model)
+

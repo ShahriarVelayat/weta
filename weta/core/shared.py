@@ -64,6 +64,10 @@ def spark_idf(env, inputs, settings):
     return spark_estimator(env, feature.IDF, inputs, settings)
 
 
+def spark_string_indexer(env, inputs, settings):
+    return spark_estimator(env, feature.StringIndexer, inputs, settings)
+
+
 # ----------------------- learn -----------------------
 
 def spark_decision_tree_classifier(env, inputs, settings):
@@ -81,6 +85,16 @@ def spark_logistic_regression(env, inputs, settings):
 def spark_naive_bayes(env, inputs, settings):
     return spark_estimator(env, classification.NaiveBayes, inputs, settings)
 
+
+def spark_model_transform(env, inputs, settings):
+    model = inputs['Model']
+    df = inputs['DataFrame']
+    output_data_frame = model.transform(df)
+
+    return {
+        'Model': model,
+        'DataFrame': output_data_frame
+    }
 
 # ----------------------- data -----------------------
 
@@ -104,3 +118,12 @@ def dataframe_joiner(env, inputs, settings):
     id_col = settings['id']
     df = df1.join(df2, [id_col])
     return {'DataFrame': df}
+
+def dataframe_splitter(env, inputs, settings):
+    df = inputs['DataFrame']
+    train, test = df.randomSplit([settings['train_weight'], settings['test_weight']], seed=12345)
+
+    return {
+        'DataFrame1': train,
+        'DataFrame2': test
+    }

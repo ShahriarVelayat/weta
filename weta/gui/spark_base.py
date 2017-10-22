@@ -124,6 +124,7 @@ class SparkBase(SparkEnvironment, AsyncTask):
         if not self._validate_input() or not self._validate_parameters():
             return
 
+        self.v_apply_button.setEnabled(True)
         # hide window first
         self.hide()
 

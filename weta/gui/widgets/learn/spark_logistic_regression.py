@@ -23,7 +23,7 @@ class OWLogisticRegression(SparkEstimator, widget.OWWidget):
         # predictionCol = Parameter(str, 'prediction', 'Prediction column')
         # probabilityCol = Parameter(str, "probability", 'Probability column')
         # rawPredictionCol = Parameter(str, 'rawPrediction', 'Raw probability column')
-        # weightCol = Parameter(str, 'weight', 'Weight column')
+        weightCol = Parameter(str, 'weight', 'Weight column')
 
         maxIter = Parameter(int, 100, 'Maximum iteration')
         regParam = Parameter(float, 0.0, 'Regression Parameter')
@@ -31,7 +31,7 @@ class OWLogisticRegression(SparkEstimator, widget.OWWidget):
         tol =  Parameter(float, 0.000001, 'tol')
         fitIntercept = Parameter(bool, True, 'Fit intercept')
         threshold = Parameter(float, 0.5, 'Threshold')
-        # 'thresholds = Parameter(list, None, 'Thresholds')  # list[float]
+        # thresholds = Parameter(list, None, 'Thresholds')  # list[float]
         standardization = Parameter(bool, True, 'Standardization')
         aggregationDepth = Parameter(int, 2, 'Aggregation depth')
         family = Parameter(str, 'auto', 'Family')

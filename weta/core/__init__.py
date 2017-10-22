@@ -8,4 +8,4 @@ def find_func(name):
         if hasattr(module, name):
             return getattr(module, name)
 
-    raise "Cannot find function %s in weta.core.*" % name
+    raise BaseException("Cannot find function %s in weta.core.*" % name)

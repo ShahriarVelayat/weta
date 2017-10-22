@@ -8,12 +8,14 @@ from itertools import combinations
 import numpy
 # import scipy.misc
 # from scipy import spatial
+import scipy
 from Orange.widgets.widget import OWWidget
 from nltk.corpus import wordnet
 from nltk.wsd import lesk
+from pyspark.ml.feature import VectorAssembler
 from pyspark.sql import functions as F
 from pyspark.sql.functions import udf, struct
-from pyspark.sql.types import IntegerType, StringType, ArrayType, Row
+from pyspark.sql.types import IntegerType, StringType, ArrayType, Row, DoubleType, StructField, StructType
 
 from scipy.optimize import linear_sum_assignment
 
@@ -227,35 +229,35 @@ def d_distance(x, y):
 
 # 1 if same else 0
 def d_nominalDistance(x, y):
-    if x == 'UNKNOWN' or y == 'UNKNOWN': return -1#'?'
+    if x == 'UNKNOWN' or y == 'UNKNOWN': return None  # '?'
     return 1 if x == y else 0
 
 
 def d_cosineTFIDF(xvec, yvec):
-    if len(xvec) == 0 or len(yvec) == 0: return -1.0#'?'
+    if len(xvec) == 0 or len(yvec) == 0: return None  # '?'
 
     # Return cosine similarity
-    return (xvec.dot(yvec)/(xvec.norm(2)*yvec.norm(2))).item()#1 - spatial.distance.cosine(xvec, yvec)
+    return (xvec.dot(yvec) / (xvec.norm(2) * yvec.norm(2))).item()  # 1 - spatial.distance.cosine(xvec, yvec)
 
 
 # As above, but for 2 grams
 def d_cosineTFIDF2(xvec, yvec):
-    if len(xvec) == 0 or len(yvec) == 0: return -1.0#'?'
+    if len(xvec) == 0 or len(yvec) == 0: return None  # '?'
 
     # Return cosine similarity
-    return (xvec.dot(yvec)/(xvec.norm(2)*yvec.norm(2))).item()#1 - spatial.distance.cosine(xvec, yvec)
+    return (xvec.dot(yvec) / (xvec.norm(2) * yvec.norm(2))).item()  # 1 - spatial.distance.cosine(xvec, yvec)
 
 
 # As above, but the two grams are parsed verb-noun pairs
 def d_cosineMO(xvec, yvec):
-    if len(xvec) == 0 or len(yvec) == 0: return -1.0#'?'
+    if len(xvec) == 0 or len(yvec) == 0: return None  # '?'
 
     # Return cosine similarity
-    return (xvec.dot(yvec)/(xvec.norm(2)*yvec.norm(2))).item()#1 - spatial.distance.cosine(xvec, yvec)
+    return (xvec.dot(yvec) / (xvec.norm(2) * yvec.norm(2))).item()  # 1 - spatial.distance.cosine(xvec, yvec)
 
 
 # def d_moSim(x, y):
-#     if len(x) == 0 or len(y) == 0: return -1#'?'
+#     if len(x) == 0 or len(y) == 0: return None#'?'
 #
 #     similarity = 0
 #     for word in x:
@@ -269,7 +271,7 @@ def d_cosineMO(xvec, yvec):
 # Uses wordnet to discover path similarity between lists
 def d_wordNet(x, y):
     if len(x) < 1 or len(y) < 1:
-        return -1.0#'?'
+        return None  # '?'
 
     def getUnique(sent, word):
         return lesk(sent, word, pos=wordnet.NOUN)
@@ -317,7 +319,7 @@ def d_wordNet(x, y):
 # Uses wordnet to discover path similarity between lists
 def d_wordNetNormalizedAdditive(x, y):
     if len(x) < 1 or len(y) < 1:
-        return -1.0#'?'
+        return None  # '?'
 
     def getUnique(sent, word):
         return lesk(sent, word, pos=wordnet.NOUN)
@@ -347,7 +349,7 @@ def d_wordNetNormalizedAdditive(x, y):
 
 
 def d_listSimilarity(x, y):
-    if len(x) == 0 or len(y) == 0: return -1.0#'?'
+    if len(x) == 0 or len(y) == 0: return None  # '?'
 
     similarity = 0
     for word in x:
@@ -362,21 +364,22 @@ def d_listSimilarity(x, y):
 from collections import OrderedDict
 
 FEATURES_TO_USE = OrderedDict({
-    "locationType": ('Location Type', p_locationType, d_nominalDistance),
-    'ordinalDate': ('Occurrence Start Date', p_ordinalDate, d_distance),
-    'time': ('Occurrence Start Time', p_time, d_timeDifference),
-    'entryLocation': ('Narrative', p_entryLocation, d_nominalDistance),
-    'entryPoint': ('Narrative', p_entryPoint, d_nominalDistance),
-    'dayOfWeek': ('Occurrence Start Date', p_dayOfWeek, d_dayDifference),
-    'northingEasting': (('NZTM Location Northing', 'NZTM Location Easting'), p_northingEasting, d_straightLineDistance),
+    "locationType": ('Location Type', p_locationType, d_nominalDistance, IntegerType()),
+    'ordinalDate': ('Occurrence Start Date', p_ordinalDate, d_distance, IntegerType()),
+    'time': ('Occurrence Start Time', p_time, d_timeDifference, IntegerType()),
+    'entryLocation': ('Narrative', p_entryLocation, d_nominalDistance, IntegerType()),
+    'entryPoint': ('Narrative', p_entryPoint, d_nominalDistance, IntegerType()),
+    'dayOfWeek': ('Occurrence Start Date', p_dayOfWeek, d_dayDifference, IntegerType()),
+    'northingEasting': (
+    ('NZTM Location Northing', 'NZTM Location Easting'), p_northingEasting, d_straightLineDistance, IntegerType()),
 
     'methodOfEntry': ('Narrative', p_methodOfEntry, None),  # non final feature
-    'messy': ('methodOfEntry', p_messy, d_nominalDistance),
-    'signature': ('Narrative', p_signature, d_nominalDistance),
-    'propertySecure': ('Narrative', p_propertySecure, d_nominalDistance),
-    'propertyStolenWordnet': ('Narrative', p_propertyStolenList, d_wordNet),
-    'cosineTFIDF': (None, None, d_cosineTFIDF),
-    'cosineTFIDF2': (None, None, d_cosineTFIDF2),
+    'messy': ('methodOfEntry', p_messy, d_nominalDistance, IntegerType()),
+    # 'signature': ('Narrative', p_signature, d_nominalDistance, IntegerType()),
+    'propertySecure': ('Narrative', p_propertySecure, d_nominalDistance, IntegerType()),
+    'propertyStolenWordnet': ('Narrative', p_propertyStolenList, d_wordNet, DoubleType()),
+    'cosineTFIDF': (None, None, d_cosineTFIDF, DoubleType()),
+    'cosineTFIDF2': (None, None, d_cosineTFIDF2, DoubleType()),
     # 'cosineMO': ('methodOfEntry', p_pullMOTags, d_cosineMO),
     # 'propertyStolenWordNetNA': ('Narrative', p_propertyStolenList, d_wordNetNormalizedAdditive),
     # 'listSimilarity': ('Narrative', p_propertyStolenList, d_listSimilarity),
@@ -445,9 +448,9 @@ def nzpolice_link(env, inputs, settings):
         length = len(groups[group])
         if length == 1:
             continue
-        NUM_LINKED += length*(length-1)-1#scipy.misc.comb(length, 2, exact=True)  # combination
+        NUM_LINKED += scipy.misc.comb(length, 2, exact=True)  # combination length*(length-1)-1
 
-    NUM_TO_SELECT = int(math.ceil(NUM_LINKED / NUM_GROUPS))
+    NUM_TO_SELECT = int(math.ceil(NUM_LINKED / NUM_GROUPS)) * settings['select_ratio']
 
     print('%d groups, %d linked, %d select' % (NUM_GROUPS, NUM_LINKED, NUM_TO_SELECT))
     set_progress(20)
@@ -456,31 +459,138 @@ def nzpolice_link(env, inputs, settings):
     links = []
     for group in groups:
         group_weight = 1 / len(groups[group])
-        internal_group_links = [t + (group_weight,) for t in combinations(groups[group], 2)]
-        external_group_links = list()
+        internal_group_links = [t + (group_weight, 1) for t in combinations(groups[group], 2)]
+        external_group_links = []
+
         for report in groups[group]:
             random_groups = random.sample([g for g in groups if g != group], NUM_TO_SELECT)
-        external_group_links.extend([(report, random.choice(groups[g]), 1.0) for g in random_groups])
+            external_group_links += [(report, random.choice(groups[g]), 1.0, 0) for g in random_groups]
 
         links.extend(internal_group_links)
         links.extend(external_group_links)
-
 
     print('Links combination finished: %d' % len(links))
     set_progress(30)
 
     print('Start links with distance transformation...')
     linked_rows = []
+
     progress = 0
     for link in links:
         row1 = link[0]
         row2 = link[1]
         row = {feature: FEATURES_TO_USE[feature][2](row1[feature], row2[feature]) for feature in FEATURES_TO_USE if
                FEATURES_TO_USE[feature][2] is not None}
-        row['class'] = link[2]
+        row['weight'] = link[2]
+        row['class'] = link[3]
         linked_rows.append(Row(**row))
         progress += 1
-        set_progress(30 + progress*60/len(links))
+        set_progress(30 + progress * 60 / len(links))
 
-    df = env['sqlContext'].createDataFrame(linked_rows)
-    return {'DataFrame': df}
+    fields = [StructField(feature, FEATURES_TO_USE[feature][3], True) for feature in FEATURES_TO_USE if
+              FEATURES_TO_USE[feature][2] is not None]
+    fields.append(StructField('weight', DoubleType(), False))
+    fields.append(StructField('class', IntegerType(), False))
+
+    df = env['sqlContext'].createDataFrame(linked_rows, schema=StructType(fields))
+    raw_df = _handle_missing(df)
+    df = _vector_assembly(raw_df)
+
+    return {'DataFrame': df, 'RawDataFrame': raw_df}
+
+def _handle_missing(df):
+    from pyspark.ml.feature import VectorAssembler
+    from pyspark.ml.feature import Imputer
+    from pyspark.sql import functions as F
+
+    # handle missing values
+    columns = list(filter(lambda col: col not in ('class', 'weight'), df.columns))
+    dtypes = dict(df.dtypes)
+
+    # for int columns
+    int_columns = list(filter(lambda col: dtypes[col] not in ('float', 'double'), columns))
+    stats = df.agg(*(
+        F.avg(c).alias(c) for c in int_columns
+    ))
+    fillers = {k: round(v) for k, v in stats.first().asDict().items() if v is not None}
+    df = df.na.fill(fillers)
+
+    # for float columns
+    float_columns = list(filter(lambda col: dtypes[col] in ('float', 'double'), columns))
+    imputer = Imputer(
+        inputCols=float_columns,
+        outputCols=["{}_imputed".format(c) for c in float_columns]
+    )
+    df = imputer.fit(df).transform(df)
+    df = df.drop(*float_columns)
+
+    return df
+
+def _vector_assembly(df):
+    # vector
+    columns = list(filter(lambda col: col not in ('class', 'weight'), df.columns))
+    assembler = VectorAssembler(inputCols=columns, outputCol='feature_vec')
+    df = assembler.transform(df)
+
+    df = df.select(['feature_vec', 'weight', 'class'])
+
+    return df
+
+
+def nzpolice_evaluate(env, inputs, settings):
+    predictions1 = inputs['DataFrame1']
+    predictions2 = inputs['DataFrame2']
+    model1 = inputs['Model1'] # type: pyspark.ml.Model
+    model2 = inputs['Model2']
+
+    import plotly.graph_objs as go
+
+
+    from pyspark.ml.evaluation import BinaryClassificationEvaluator
+    evaluator = BinaryClassificationEvaluator(labelCol="class", metricName="areaUnderROC")
+    metric1 = evaluator.evaluate(predictions1)
+    metric2 = evaluator.evaluate(predictions2)
+
+    print('train metrics: %f, test metrics: %f %f' % (model1.summary.areaUnderROC, metric1, metric2))
+
+    roc1 = model1.summary.roc.toPandas()
+    # f1 = model1.summary.fMeasureByThreshold.toPandas()
+
+    # roc2 = model2.summary.roc.toPandas()
+    trace_roc1 = go.Scatter(
+        x=roc1['FPR'],
+        y=roc1['TPR'],
+        name='ROC',
+        mode='lines'
+    )
+    # trace_f1 = go.Scatter(
+    #     x=f1['threshold'],
+    #     y=f1['F-Measure'],
+    #     name='F-Measure1',
+    #     mode='line'
+    # )
+
+    # trace_roc2 = go.Scatter(
+    #     x=roc2['TPR'],
+    #     y=roc2['FPR'],
+    #     name='ROC Curve2',
+    #     mode='markers',
+    #     marker=dict(
+    #         size=10,
+    #         color='rgba(255, 90, 100, .9)',
+    #         line=dict(
+    #             width=2,
+    #         )
+    #     )
+    # )
+
+    data = [trace_roc1, ]#trace_roc2]
+
+    layout = dict(title='LogisticRegression ROC Curve (areaUnderROC=%f)' % metric1,
+                  xaxis=dict(title='False Positive Rate'),
+                  yaxis=dict(title='True Positive Rate'),
+                  )
+
+    figure = go.Figure(data=data, layout=layout)
+
+    return {'Figure': figure}
