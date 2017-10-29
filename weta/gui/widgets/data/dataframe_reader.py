@@ -60,11 +60,12 @@ class OWDataFrameReader(SparkEnvironment, widget.OWWidget):
     def apply(self):
         # OWDataFrameReader.FORMAT_LIST[self.format][1]) \
         df = self.sqlContext.read.format(self.format) \
-            .options(header='true', inferschema='true') \
+            .options(header='true', inferschema='true', delimiter='\t') \
             .load(self.file_path)
 
         # add a id column
-        df = df.withColumn("_id", monotonically_increasing_id())
+        if '_id' not in df.columns:
+            df = df.withColumn("_id", monotonically_increasing_id())
 
         self.Outputs.data_frame.send(df)
         self.hide()

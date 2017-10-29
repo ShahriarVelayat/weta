@@ -12,7 +12,7 @@ import scipy
 from Orange.widgets.widget import OWWidget
 from nltk.corpus import wordnet
 from nltk.wsd import lesk
-from pyspark.ml.feature import VectorAssembler
+from pyspark.ml.feature import VectorAssembler, StandardScaler, MinMaxScaler
 from pyspark.sql import functions as F
 from pyspark.sql.functions import udf, struct
 from pyspark.sql.types import IntegerType, StringType, ArrayType, Row, DoubleType, StructField, StructType
@@ -371,7 +371,7 @@ FEATURES_TO_USE = OrderedDict({
     'entryPoint': ('Narrative', p_entryPoint, d_nominalDistance, IntegerType()),
     'dayOfWeek': ('Occurrence Start Date', p_dayOfWeek, d_dayDifference, IntegerType()),
     'northingEasting': (
-    ('NZTM Location Northing', 'NZTM Location Easting'), p_northingEasting, d_straightLineDistance, IntegerType()),
+        ('NZTM Location Northing', 'NZTM Location Easting'), p_northingEasting, d_straightLineDistance, IntegerType()),
 
     'methodOfEntry': ('Narrative', p_methodOfEntry, None),  # non final feature
     'messy': ('methodOfEntry', p_messy, d_nominalDistance, IntegerType()),
@@ -401,8 +401,8 @@ def nzpolice_preprocess(env, inputs, settings):
             params = (df[c] for c in in_cols) if isinstance(in_cols, tuple) else [df[in_cols]]
             df = df.withColumn(feature, udf_func(*params))
 
-    df = df.withColumn('group', p_narrative_hash('Narrative'))
-    df = df.withColumnRenamed('Master PRN', 'offender')
+    df = df.withColumn('narrative_hash', p_narrative_hash('Narrative'))
+    df = df.withColumnRenamed('Person ID', 'offender')
 
     return {'DataFrame': df}
 
@@ -419,7 +419,6 @@ def nzpolice_link(env, inputs, settings):
     # offender -> crimes
     offender_count_list = df.groupby('offender').count().collect()
     offender_count_dict = {row['offender']: row['count'] for row in offender_count_list}
-
     set_progress(5)
 
     @udf(returnType=IntegerType())
@@ -427,16 +426,37 @@ def nzpolice_link(env, inputs, settings):
         return offender_count_dict[offender]
 
     print('associate offence count...')
-    df = df.withColumn('count', offender_count('offender'))
+    df = df.withColumn('offender_offence_count', offender_count('offender'))
 
     set_progress(10)
 
     #####################################
 
-    print('Start group reports...')
-    grouped_list = df.groupby('group').agg(F.collect_list(struct(*df.columns)).alias('reports')).collect()
-    print('group collected')
-    groups = {row['group']: row['reports'] for row in grouped_list}
+    print('Start group reports by narrative...')
+    groups_by_narrative = df.groupby('narrative_hash').agg(F.collect_list(struct(*df.columns)).alias('reports')).collect()
+
+    narrative_primaryoffender = dict()
+    for row in groups_by_narrative:
+        primary_offender = max(row['reports'], key=lambda row: row['offender_offence_count'])['offender']
+        narrative_primaryoffender[row['narrative_hash']] = primary_offender
+
+    print('%d independent offence report' % len(narrative_primaryoffender.keys()))
+
+    @udf(returnType=StringType())
+    def replace_offender_for_group_offence(narrative_hash):
+        return narrative_primaryoffender[narrative_hash]
+
+    df = df.withColumnRenamed('offender', 'origin_offender')
+    df = df.withColumn('offender', replace_offender_for_group_offence('narrative_hash'))
+    df = df.drop('origin_offender')
+
+    reports = df.collect()
+
+
+    # reports = [max(row['reports'], key=lambda row: row['offender_offence_count']) for row in groups_by_narrative]
+    groups = {} # group_by_offender
+    for report in reports:
+        groups.setdefault(report['offender'], []).append(report)
 
     set_progress(15)
 
@@ -452,8 +472,10 @@ def nzpolice_link(env, inputs, settings):
 
     NUM_TO_SELECT = int(math.ceil(NUM_LINKED / NUM_GROUPS)) * settings['select_ratio']
 
-    print('%d groups, %d linked, %d select' % (NUM_GROUPS, NUM_LINKED, NUM_TO_SELECT))
+    print('%d groups, %d linked, %d unlinked with %d select/r on average' % (NUM_GROUPS, NUM_LINKED, NUM_TO_SELECT * len(reports), NUM_TO_SELECT))
     set_progress(20)
+
+    balancing_ratio = NUM_TO_SELECT * len(reports) / (NUM_LINKED + NUM_TO_SELECT * len(reports))
 
     print('Start links combination...')
     links = []
@@ -493,13 +515,18 @@ def nzpolice_link(env, inputs, settings):
     fields.append(StructField('class', IntegerType(), False))
 
     df = env['sqlContext'].createDataFrame(linked_rows, schema=StructType(fields))
+    attributes = df.columns
+
     raw_df = _handle_missing(df)
     df = _vector_assembly(raw_df)
+
+    df = _normalize(df)
+
+    _write_arff(attributes, df)
 
     return {'DataFrame': df, 'RawDataFrame': raw_df}
 
 def _handle_missing(df):
-    from pyspark.ml.feature import VectorAssembler
     from pyspark.ml.feature import Imputer
     from pyspark.sql import functions as F
 
@@ -526,16 +553,50 @@ def _handle_missing(df):
 
     return df
 
+def _normalize(df):
+    scaler = MinMaxScaler(inputCol="raw_feature_vec", outputCol="feature_vec")
+    # withStd=True, withMean=False)
+
+    # Compute summary statistics by fitting the StandardScaler
+    scalerModel = scaler.fit(df)
+
+    # Normalize each feature to have unit standard deviation.
+    df = scalerModel.transform(df)
+    df.drop('raw_feature_vec')
+    return df
+
 def _vector_assembly(df):
     # vector
     columns = list(filter(lambda col: col not in ('class', 'weight'), df.columns))
-    assembler = VectorAssembler(inputCols=columns, outputCol='feature_vec')
+    # columns = ['time', 'northingEasting']
+    assembler = VectorAssembler(inputCols=columns, outputCol='raw_feature_vec')
     df = assembler.transform(df)
 
-    df = df.select(['feature_vec', 'weight', 'class'])
+    df = df.select(['raw_feature_vec', 'weight', 'class'])
 
     return df
 
+def _write_arff(attributes, df):
+    # write ARFF header
+    arff = open("/Users/Chao/reports.arff", "w")
+    arff.write("@RELATION reports\n\n")
+    for col in attributes:
+        if col != 'class':
+            arff.write("@ATTRIBUTE %s  NUMERIC\n" % col)
+        else:
+            arff.write("@ATTRIBUTE class {0,1}\n")
+    arff.write("\n@DATA\n")
+
+    # write ARFF data
+    def write_line(r):
+        l = [str(v) for v in r['feature_vec']]
+        l.append(str(r['weight']))
+        l.append(str(r['class']))
+        arff.write(','.join(l) + "\n")
+
+    for r in df.collect():
+        write_line(r)
+    arff.close()
 
 def nzpolice_evaluate(env, inputs, settings):
     predictions1 = inputs['DataFrame1']

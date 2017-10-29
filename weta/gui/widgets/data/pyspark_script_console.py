@@ -25,11 +25,13 @@ class EmbedIPython(RichJupyterWidget):
         super(RichJupyterWidget, self).__init__()
         self.kernel_manager = QtInProcessKernelManager()
         self.kernel_manager.start_kernel()
-        self.kernel = self.kernel_manager.kernel
-        self.kernel.gui = 'qt4'
-        self.kernel.shell.push(kwarg)
         self.kernel_client = self.kernel_manager.client()
         self.kernel_client.start_channels()
+
+        kernel = self.kernel_manager.kernel
+        kernel.gui = 'qt'
+        self.shell = kernel.shell
+        self.shell.push(kwarg)
 
 
 def text_format(foreground = Qt.black, weight = QFont.Normal):
@@ -258,42 +260,42 @@ class OWPySparkScript(SparkEnvironment, widget.OWWidget):
     @Inputs.data
     def set_data(self, obj):
         self.data = obj
-        self.console.kernel.shell.push({'data': self.data})
+        self.console.shell.push({'data': self.data})
 
     @Inputs.df
     def set_df(self, df):
         self.df = df
-        self.console.kernel.shell.push({'df': self.df})
+        self.console.shell.push({'df': self.df})
 
     @Inputs.df1
     def set_df1(self, df):
         self.df1 = df
-        self.console.kernel.shell.push({'df1': self.df1})
+        self.console.shell.push({'df1': self.df1})
 
     @Inputs.df2
     def set_df2(self, df):
         self.df2 = df
-        self.console.kernel.shell.push({'df2': self.df2})
+        self.console.shell.push({'df2': self.df2})
 
     @Inputs.df3
     def set_df3(self, df):
         self.df3 = df
-        self.console.kernel.shell.push({'df3': self.df3})
+        self.console.shell.push({'df3': self.df3})
 
     @Inputs.transformer
     def set_transformer(self, transformer):
         self.transformer = transformer
-        self.console.kernel.shell.push({'transformer': self.transformer})
+        self.console.shell.push({'transformer': self.transformer})
 
     @Inputs.estimator
     def set_estimator(self, estimator):
         self.estimator = estimator
-        self.console.kernel.shell.push({'estimator': self.estimator})
+        self.console.shell.push({'estimator': self.estimator})
 
     @Inputs.model
     def set_model(self, model):
         self.model = model
-        self.console.kernel.shell.push({'model': self.model})
+        self.console.shell.push({'model': self.model})
 
     def __init__(self):
         super().__init__()
@@ -397,8 +399,8 @@ class OWPySparkScript(SparkEnvironment, widget.OWWidget):
                                     data=self.data, df=self.df,
                                     df1=self.df1, df2=self.df2, df3=self.df3,
                                     transformer=self.transformer, estimator=self.estimator, model=self.model)
-        # self.console.kernel.shell.run_cell('%pylab qt')
-        self.console.kernel.shell.run_cell('print("{sparklogo}")'.format(sparklogo = self.spark_logo))
+        # self.console.shell.run_cell('%pylab qt')
+        self.console.shell.run_cell('print("{sparklogo}")'.format(sparklogo = self.spark_logo))
 
         self.consoleBox.layout().addWidget(self.console)
         self.consoleBox.setAlignment(Qt.AlignBottom)
@@ -528,12 +530,8 @@ class OWPySparkScript(SparkEnvironment, widget.OWWidget):
 
     def commit(self):
         self._script = str(self.text.toPlainText())
+        inputs = ['data', 'df', 'df1', 'df2', 'df3', 'transformer', 'estimator', 'model']
+        self.console.shell.user_ns.update({input: getattr(self, input) for input in inputs})
         self.console.execute(self._script)
-        self.Outputs.data.send(self.console.kernel.shell.user_ns['data'])
-        self.Outputs.df.send(self.console.kernel.shell.user_ns['df'])
-        self.Outputs.df1.send(self.console.kernel.shell.user_ns['df1'])
-        self.Outputs.df2.send(self.console.kernel.shell.user_ns['df2'])
-        self.Outputs.df3.send(self.console.kernel.shell.user_ns['df3'])
-        self.Outputs.transformer.send(self.console.kernel.shell.user_ns['transformer'])
-        self.Outputs.estimator.send(self.console.kernel.shell.user_ns['estimator'])
-        self.Outputs.model.send(self.console.kernel.shell.user_ns['model'])
+        for input in inputs:
+            getattr(self.Outputs, input).send(self.console.shell.user_ns[input])
