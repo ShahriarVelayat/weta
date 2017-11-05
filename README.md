@@ -12,6 +12,12 @@ algorithms to ease text analytics tasks.
 
 P.S. Weta is also a kind of insect in New Zealand.
 
+## install
+
+install Anaconda first.
+
+Then `conda install pyspark plotly pandas Orange3`
+
 
 ## Building blocks
 
