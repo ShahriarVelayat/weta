@@ -31,9 +31,8 @@ class OWDataFrameReader(SparkEnvironment, widget.OWWidget):
         data_frame = widget.Output('DataFrame', pyspark.sql.DataFrame)
 
     FORMAT_LIST = [
-        'json',
         'csv',
-        'libsvm',
+        'tsv'
     ]
     OPTIONS_LIST = [
         Parameter('header', 'true', 'Include Header?', 'str')
@@ -59,8 +58,9 @@ class OWDataFrameReader(SparkEnvironment, widget.OWWidget):
 
     def apply(self):
         # OWDataFrameReader.FORMAT_LIST[self.format][1]) \
-        df = self.sqlContext.read.format(self.format) \
-            .options(header='true', inferschema='true', delimiter='\t') \
+
+        df = self.sqlContext.read.format('csv')\
+            .options(header='true', inferschema='true', delimiter='\t' if self.format == 'tsv' else ',')\
             .load(self.file_path)
 
         # add a id column
