@@ -1,11 +1,7 @@
-import sys, os
-sys.path.insert(0, os.path.abspath('..'))
-
+import sys
 import Orange.canvas.__main__ as orange
 from Orange import widgets
 import Orange.canvas.registry.discovery as discovery
-
-
 
 def dummy_widget_discovery(discovery):
     pass
