@@ -14,6 +14,8 @@ P.S. Weta is also a kind of insect in New Zealand.
 
 ## install
 
+Detailed documentation can be found here: https://github.com/richdyang/weta/wiki
+
 install Anaconda first.
 
 Then `conda install pyspark plotly pandas Orange3`
